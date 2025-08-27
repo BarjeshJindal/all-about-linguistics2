@@ -81,7 +81,7 @@ class UserVipExamController extends Controller
 
         $dialogueId = $userPractice->dialogue_id;
 
-        // 2) Get admin segments for this dialogue
+        // 2) Get admin segments for this dialogue (order by id ensures sequence)
         $adminSegments = DB::select("
             SELECT id, dialogue_id, segment_path, sample_response, answer_eng, answer_other_language
             FROM naati_vip_exam_segments
@@ -89,12 +89,12 @@ class UserVipExamController extends Controller
             ORDER BY id
         ", [$dialogueId]);
 
-        // 3) Get user segments for this attempt
+        // 3) Get user segments for this attempt (order by segment_number)
         $userSegments = DB::select("
-            SELECT id, user_dialogue_id, segment_path, created_at
+            SELECT id, user_dialogue_id, segment_path, segment_number, created_at
             FROM naati_user_vip_exam_segments
             WHERE user_dialogue_id = ?
-            ORDER BY id
+            ORDER BY segment_number
         ", [$userPracticeDialogueId]);
 
         // 4) Prepare structured data
@@ -107,13 +107,13 @@ class UserVipExamController extends Controller
             'user_segments'    => $userSegments,
         ];
 
-
         // 5) Return view
         return view('naati.users.vip-exams.completed-vip-exams', [
-            'practiceDialogue' => $userPractice, // meta info
-            'dialogue'     => $dialogue,     // with segments
+            'practiceDialogue' => $userPractice,
+            'dialogue'         => $dialogue,
         ]);
     }
+
 
 
     
@@ -148,10 +148,12 @@ class UserVipExamController extends Controller
         $request->validate([
             'dialogue_id' => 'required|integer',
             'responses.*' => 'file|mimes:webm,wav,mp3,ogg|max:10240',
+          'segment_ids.*' => 'required|integer',
         ]);
 
         try {
             $responses  = $request->file('responses');
+            $segmentIds  = $request->input('segment_ids', []);
             $dialogueId = $request->input('dialogue_id');
 
             // 🚨 Check if no responses were uploaded
@@ -165,18 +167,19 @@ class UserVipExamController extends Controller
             $userDialogue = new NaatiUserVipExam();
             $userDialogue->user_id     = $userId;
             $userDialogue->dialogue_id = $dialogueId;
+         
             $userDialogue->save();
 
             // Save user segments
-            foreach ($responses as $audioFile) {
+            foreach ($responses as $index => $audioFile) {
                 $path = $audioFile->store("user-responses/{$userId}/vip-exams-audios", 'public');
 
                 $userSegment = new NaatiUserVipExamSegment();
                 $userSegment->segment_path     = $path;
                 $userSegment->user_dialogue_id = $userDialogue->id;
+                $userSegment->segment_number   = $segmentIds[$index] ?? null;
                 $userSegment->save();
             }
-
             return response()->json([
                 'message'  => 'Responses saved.',
                 'redirect' => route('vip-exam')

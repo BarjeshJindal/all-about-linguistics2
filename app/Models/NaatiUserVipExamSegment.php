@@ -9,5 +9,6 @@ class NaatiUserVipExamSegment extends Model
       protected $fillable = [
         'segment_path',
         'user_dialogue_id',
+        'segment_number'
     ];
 }

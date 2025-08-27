@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('segment_path');
             $table->bigInteger('user_dialogue_id');
+            $table->bigInteger('segment_number');
             $table->timestamps();
         });
     }

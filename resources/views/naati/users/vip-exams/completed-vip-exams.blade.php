@@ -13,19 +13,11 @@
                             <p class="dialogue-desc">{{ $dialogue->description }}</p>
                         </div>
 
-                        @php
-                            // Prepare segments
-                            $adminSegments = $dialogue->admin_segments;
-                            $userSegmentsMap = [];
-                            foreach ($dialogue->user_segments as $us) {
-                                $userSegmentsMap[$us->id] = $us; // or use segment_number if available
-                            }
-                        @endphp
-
-                        @foreach ($adminSegments as $key => $adminSegment)
+                        @foreach ($dialogue->admin_segments as $key => $adminSegment)
                             @php
                                 $segNum = $key + 1;
-                                $userSegment = $dialogue->user_segments[$key] ?? null;
+                                // ✅ Match user segment by segment_number = admin segment id
+                                $userSegment = collect($dialogue->user_segments)->firstWhere('segment_number', $adminSegment->id);
                             @endphp
 
                             <div class="mocktest-box mb-2">
@@ -38,8 +30,9 @@
                                             @if (!empty($adminSegment->segment_path))
                                                 <div id="waveform-admin-{{ $adminSegment->id }}"></div>
                                                 <button type="button" class="btn btn-sm btn-primary my-2"
-                                                    onclick="playPause('admin_{{ $adminSegment->id }}')">Play /
-                                                    Pause</button>
+                                                    onclick="playPause('admin_{{ $adminSegment->id }}')">
+                                                    Play / Pause
+                                                </button>
                                             @else
                                                 <p>No audio available</p>
                                             @endif
@@ -51,7 +44,9 @@
                                             @if ($userSegment && !empty($userSegment->segment_path))
                                                 <div id="waveform-user-{{ $userSegment->id }}"></div>
                                                 <button type="button" class="btn btn-sm btn-success mt-2"
-                                                    onclick="playPause('user_{{ $userSegment->id }}')">Play / Pause</button>
+                                                    onclick="playPause('user_{{ $userSegment->id }}')">
+                                                    Play / Pause
+                                                </button>
                                             @else
                                                 <p>No recording submitted</p>
                                             @endif
@@ -63,8 +58,9 @@
                                             @if (!empty($adminSegment->sample_response))
                                                 <div id="waveform-sample-{{ $adminSegment->id }}"></div>
                                                 <button type="button" class="btn btn-sm btn-warning mt-2"
-                                                    onclick="playPause('sample_{{ $adminSegment->id }}')">Play /
-                                                    Pause</button>
+                                                    onclick="playPause('sample_{{ $adminSegment->id }}')">
+                                                    Play / Pause
+                                                </button>
                                             @else
                                                 <p>No sample response</p>
                                             @endif
@@ -84,7 +80,8 @@
                                         <label class="form-label answer-language-label">Answer (Other Language)</label>
                                         <div class="mocktest-box">
                                             <p class="dialogue-desc answers">
-                                                {{ $adminSegment->answer_other_language ?? 'N/A' }}</p>
+                                                {{ $adminSegment->answer_other_language ?? 'N/A' }}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -101,10 +98,10 @@
     <script src="https://unpkg.com/wavesurfer.js"></script>
     @php
         $audioData = [
-            'admin' => collect($adminSegments)->mapWithKeys(function ($seg) {
+            'admin' => collect($dialogue->admin_segments)->mapWithKeys(function ($seg) {
                 return [$seg->id => $seg->segment_path];
             }),
-            'sample' => collect($adminSegments)->mapWithKeys(function ($seg) {
+            'sample' => collect($dialogue->admin_segments)->mapWithKeys(function ($seg) {
                 return [$seg->id => $seg->sample_response];
             }),
             'user' => collect($dialogue->user_segments)->mapWithKeys(function ($seg) {
@@ -127,8 +124,7 @@
                     wavePlayers[`${type}_${id}`] = WaveSurfer.create({
                         container: containerId,
                         waveColor: '#999',
-                        progressColor: type === 'admin' ? '#007bff' : type === 'user' ? '#28a745' :
-                            '#ffc107',
+                        progressColor: type === 'admin' ? '#007bff' : type === 'user' ? '#28a745' : '#ffc107',
                         height: 80,
                         responsive: true
                     });
