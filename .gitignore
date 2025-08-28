@@ -4,9 +4,9 @@
 /storage/*.key
 /storage/pail
 /storage/app
-# /storage/framework/cache
-# /storage/framework/sessions
-# /storage/framework/views
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/views
 /vendor
 .env
 .env.backup
