@@ -59,8 +59,7 @@
                         <p class="instruction-popup-title">To begin the segment:</p>
                         <ul>
                             <li>
-                                Click <button class="btn btn-sm btn-outline-primary">▶️ Play / Pause</button> to start the
-                                dialogue
+                                Click <button class="btn btn-sm btn-outline-primary">▶️ Play / Pause</button> to start the dialogue
                             </li>
                         </ul>
                         <p class="instruction-popup-title">To record your voice for the segment:</p>
@@ -642,9 +641,21 @@
                     formData.append('dialogue_id', document.getElementById('dialogueIdInput').value);
 
                     for (let segmentId in responses) {
-                        const file = new File([responses[segmentId]], `segment_${segmentId}.webm`, { type: "audio/webm" });
-                        formData.append('responses[]', file);
-                        formData.append('segment_ids[]', segmentId);
+                        // get all segment containers
+                        const segmentElements = document.querySelectorAll('.segment-container');
+
+                        // find this segment's position
+                        let segmentNumber = Array.from(segmentElements).findIndex(
+                            el => el.dataset.segmentId === segmentId
+                        ) + 1;
+
+                        const file = new File(
+                            [responses[segmentId]],
+                            `segment_${segmentNumber}.webm`,
+                            { type: "audio/webm" }
+                        );
+
+                        formData.append(`responses[${segmentNumber}]`, file); // use normalized segment number
                     }
 
                     try {

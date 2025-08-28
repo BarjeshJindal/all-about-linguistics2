@@ -658,9 +658,24 @@
                 formData.append('dialogue_id', document.getElementById('dialogueIdInput').value);
 
                 for (let segmentId in responses) {
-                    formData.append('responses[]', responses[segmentId], `segment_${segmentId}.webm`);
-                    formData.append('segment_ids[]', segmentId);
+                    // get all segment containers
+                    const segmentElements = document.querySelectorAll('.segment-container');
+
+                    // find this segment's position
+                    let segmentNumber = Array.from(segmentElements).findIndex(
+                        el => el.dataset.segmentId === segmentId
+                    ) + 1;
+
+                    const file = new File(
+                        [responses[segmentId]],
+                        `segment_${segmentNumber}.webm`,
+                        { type: "audio/webm" }
+                    );
+
+                    formData.append(`responses[${segmentId}]`, file);
+
                 }
+
 
                 try {
                     const response = await fetch("{{ route('user.segments.storeAll') }}", {

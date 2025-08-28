@@ -60,7 +60,7 @@
                                                                 </a>
                                                             </td>
                                                             <td><i class="ri-price-tag-3-fill"></i></td>
-                                                            <td>#61</td>
+                                                            <td></td>
                                                         </tr>
                                                     @endforeach
                                                 </tbody>

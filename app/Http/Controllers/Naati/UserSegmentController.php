@@ -42,55 +42,61 @@ class UserSegmentController extends Controller
 
     public function submitResponses(Request $request)
     {
-    $userId = auth()->id();
+        $userId = auth()->id();
 
-    $request->validate([
-        'dialogue_id' => 'required|integer',
-        'responses.*' => 'file|mimes:webm,wav,mp3,ogg|max:10240',
-    ]);
-
-    try {
-        $responses  = $request->file('responses');
-        $dialogueId = $request->input('dialogue_id');
-
-        // 🚨 Check if no responses were uploaded
-        if (empty($responses)) {
-            return response()->json([
-                'message' => 'No recordings found','redirect'=>route('practiceDialogue')
-            ], 200);
-        }
-        $categoryId= NaatiPracticeDialogue::where('id',$dialogueId)->value('category_id');
-       
-        // Save user dialogue
-        $userDialogue = new NaatiUserPracticeDialogue();
-        $userDialogue->user_id    = $userId;
-        $userDialogue->dialogue_id = $dialogueId;
-        $userDialogue->category_id = $categoryId;
-        $userDialogue->save(); 
-
-        // Save user segments
-        foreach ($responses as $audioFile) {
-            $path = $audioFile->store("user-responses/{$userId}/practice-dialogue-audios", 'public');
-
-            $userSegment = new NaatiUserPracticeDialogueSegment();
-            $userSegment->segment_path     = $path;
-            $userSegment->user_dialogue_id = $userDialogue->id;
-            $userSegment->save();
-        }
-
-        return response()->json(['message' => 'Responses saved.','redirect'=>route('practiceDialogue')]);
-
-    } catch (\Exception $e) {
-        \Log::error('Submit Responses Error', [
-            'message' => $e->getMessage(),
-            'trace'   => $e->getTraceAsString(),
+        $request->validate([
+            'dialogue_id' => 'required|integer',
+            'responses.*' => 'file|mimes:webm,wav,mp3,ogg|max:10240',
         ]);
 
-        return response()->json([
-            'message' => $e->getMessage(),
-            'error'   => $e->getMessage()
-        ], 500);
-    }
+        try {
+            $responses  = $request->file('responses');
+            $dialogueId = $request->input('dialogue_id');
+
+            // 🚨 Check if no responses were uploaded
+            if (empty($responses)) {
+                return response()->json([
+                    'message' => 'No recordings found',
+                    'redirect'=> route('practiceDialogue')
+                ], 200);
+            }
+
+            $categoryId = NaatiPracticeDialogue::where('id', $dialogueId)->value('category_id');
+        
+            // Save user dialogue
+            $userDialogue = new NaatiUserPracticeDialogue();
+            $userDialogue->user_id     = $userId;
+            $userDialogue->dialogue_id = $dialogueId;
+            $userDialogue->category_id = $categoryId;
+            $userDialogue->save(); 
+
+            // Save user segments with segment_number
+            foreach ($responses as $segmentId => $audioFile) {
+                $path = $audioFile->store("user-responses/{$userId}/practice-dialogue-audios", 'public');
+
+                $userSegment = new NaatiUserPracticeDialogueSegment();
+                $userSegment->segment_path     = $path;
+                $userSegment->user_dialogue_id = $userDialogue->id;
+                $userSegment->segment_number   = $segmentId; // 👈 use original segmentId
+                $userSegment->save();
+            }
+
+            return response()->json([
+                'message'  => 'Responses saved.',
+                'redirect' => route('practiceDialogue')
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Submit Responses Error', [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'message' => $e->getMessage(),
+                'error'   => $e->getMessage()
+            ], 500);
+        }
     }
 
 

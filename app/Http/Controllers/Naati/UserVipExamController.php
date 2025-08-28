@@ -36,18 +36,6 @@ class UserVipExamController extends Controller
         // ->whereNotNull('naati_user_mock_tests.score')
         ->get();    
 
-        //     $user_dialogues = NaatiUserPracticeDialogue::where('naati_user_practice_dialogues.user_id', $user->id)
-        // ->join('naati_practice_dialogues', 'naati_user_practice_dialogues.dialogue_id', '=', 'naati_practice_dialogues.id')
-        // ->select(
-        //     'naati_user_practice_dialogues.*',
-        //     'naati_practice_dialogues.title as dialogue_title'
-        // )
-        // ->get();
-
-
-
-        // dd($user_dialogues->toArray());
-
         
         return view('naati.users.vip-exams.index', [
             'dialogues' => $dialogues,
@@ -141,14 +129,14 @@ class UserVipExamController extends Controller
         ]);
     }
 
-  public function submitVipExamResponses(Request $request)
+    public function submitVipExamResponses(Request $request)
     {
         $userId = auth()->id();
 
         $request->validate([
             'dialogue_id' => 'required|integer',
             'responses.*' => 'file|mimes:webm,wav,mp3,ogg|max:10240',
-          'segment_ids.*' => 'required|integer',
+            'segment_ids.*' => 'required|integer',
         ]);
 
         try {
@@ -157,7 +145,7 @@ class UserVipExamController extends Controller
             $dialogueId = $request->input('dialogue_id');
 
             // 🚨 Check if no responses were uploaded
-        if (empty($responses)) {
+            if (empty($responses)) {
                     return response()->json([
                         'message' => 'No recordings found','redirect'=>route('vip-exam')
                     ], 200);
@@ -171,13 +159,13 @@ class UserVipExamController extends Controller
             $userDialogue->save();
 
             // Save user segments
-            foreach ($responses as $index => $audioFile) {
+            foreach ($responses as $segmentNumber => $audioFile) {
                 $path = $audioFile->store("user-responses/{$userId}/vip-exams-audios", 'public');
 
                 $userSegment = new NaatiUserVipExamSegment();
                 $userSegment->segment_path     = $path;
                 $userSegment->user_dialogue_id = $userDialogue->id;
-                $userSegment->segment_number   = $segmentIds[$index] ?? null;
+                $userSegment->segment_number   = $segmentNumber; 
                 $userSegment->save();
             }
             return response()->json([

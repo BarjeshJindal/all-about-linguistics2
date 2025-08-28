@@ -148,7 +148,7 @@ class UserController extends Controller
 
             // 3) Get user segments for this attempt
             $userSegments = DB::select("
-            SELECT id, user_dialogue_id, segment_path, created_at
+            SELECT id, user_dialogue_id, segment_path, segment_number, created_at
             FROM naati_user_practice_dialogue_segments
             WHERE user_dialogue_id = ?
             ORDER BY id
@@ -163,6 +163,8 @@ class UserController extends Controller
             'admin_segments'   => collect($adminSegments),
             'user_segments'    => collect($userSegments),
             ];
+
+            // dd($dialogue);
 
             // 5) Return view
             return view('naati.users.practice-dialogues.results', [

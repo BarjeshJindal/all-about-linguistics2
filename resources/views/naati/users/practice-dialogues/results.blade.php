@@ -14,7 +14,7 @@
             @foreach ($dialogue->admin_segments as $key => $adminSegment)
                 @php
                     $segNum = $key + 1;
-                    $userSegment = $dialogue->user_segments[$key] ?? null;
+                    $userSegment = collect($dialogue->user_segments)->firstWhere('segment_number', $segNum);
                 @endphp
 
                 <div class="mocktest-box mb-3">

@@ -17,7 +17,7 @@
                             @php
                                 $segNum = $key + 1;
                                 // ✅ Match user segment by segment_number = admin segment id
-                                $userSegment = collect($dialogue->user_segments)->firstWhere('segment_number', $adminSegment->id);
+                                $userSegment = collect($dialogue->user_segments)->firstWhere('segment_number', $key + 1);
                             @endphp
 
                             <div class="mocktest-box mb-2">
