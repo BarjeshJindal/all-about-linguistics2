@@ -130,12 +130,12 @@
                 </a>
             </li>
 
-            <li class="side-nav-item">
+            {{-- <li class="side-nav-item">
                 <a href="{{ route('users.videos') }}" class="side-nav-link">
                     <span class="menu-icon"><i class="ti ti-player-play"></i></span>
                     <span class="menu-text"> Videos</span>
                 </a>
-            </li>
+            </li> --}}
 
             <li class="side-nav-item">
                 <a href="{{route('edit.profile')}}" class="side-nav-link">
