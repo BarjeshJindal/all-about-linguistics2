@@ -156,7 +156,7 @@
 
                                     <div class="mt-2 d-flex segments-btn">
                                         <div class="start-stop-btn">
-                                            <button class="startRecording btn btn-danger">Start Test </button>
+                                            <button class="startRecording btn btn-danger">Play </button>
                                             <button class="stopRecording btn btn-danger" disabled>Stop</button>
                                         </div>
 
@@ -211,10 +211,10 @@
                                 aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <h5 class="text-primary fw-bold">English Answer:</h5>
+                            {{-- <h5 class="text-primary fw-bold"></h5> --}}
                             <p id="answerEng" class="mb-3 text-dark"></p>
 
-                            <h5 class="text-success fw-bold">{{-- $practice->second_language --}} Answer:</h5>
+                            {{-- <h5 class="text-success fw-bold">$practice->second_language</h5> --}}
                             <p id="answerHindi" class="mb-0 text-dark"></p>
                         </div>
                         <div class="modal-footer">
@@ -534,7 +534,7 @@
                             startBtn.innerText = 'Record audio after beep...'; // Indicate beep phase
                             stopBtn.disabled = true; // Disable stop until beep finishes
 
-                            const beepSound = new Audio('/sounds/beep_5s.wav'); // Path to your file
+                            const beepSound = new Audio('/sounds/beep_2sec.mp3'); // Path to your file
                             beepSound.play();
 
                             beepSound.onended = async () => {

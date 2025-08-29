@@ -135,9 +135,9 @@
                 </div>
 
                 <div class="modal-body">
-                    <h5 class="text-primary fw-bold">English Answer:</h5>
+                    {{-- <h5 class="text-primary fw-bold">English Answer:</h5> --}}
                     <p id="answerEng" class="mb-3 text-dark"></p>
-                    <h5 class="text-success fw-bold">{{-- $practice->second_language --}} Answer:</h5>
+                    {{-- <h5 class="text-success fw-bold">$practice->second_language Answer:</h5> --}}
                     <p id="answerHindi" class="mb-0 text-dark"></p>
                 </div>
 
@@ -480,7 +480,7 @@
                     stopBtn.disabled = true; // Prevent stop during beep
 
                     // Play beep sound (5-second beep)
-                    const beepSound = new Audio('/sounds/beep_5s.wav'); // Replace with your path
+                    const beepSound = new Audio('/sounds/beep_2sec.mp3'); // Replace with your path
                     beepSound.play();
 
                     beepSound.onended = async () => {

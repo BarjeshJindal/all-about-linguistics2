@@ -14,6 +14,7 @@ use App\Models\NaatiUserPracticeDialogue;
 use App\Models\NaatiUserVipExam;
 use App\Models\NaatiVocabularyWord;
 use App\Models\NaatiVocabularyUserOpenedWord;
+use App\Models\NaatiUserMockTestDialogue;
 class UserDashboardController extends Controller
 {
     public function dashboard(){
@@ -42,11 +43,12 @@ class UserDashboardController extends Controller
             $completedvipexam=NaatiUserVipExam::distinct('dialogue_id')->count('dialogue_id');
             
             $completedPracticeDialogue =NaatiUserPracticeDialogue::distinct('dialogue_id')->count('dialogue_id');
+            $completedMockTest =NaatiUserMockTestDialogue::distinct('dialogue_id')->count('dialogue_id');
              // CCL words card 
             $total_words =  NaatiVocabularyWord::where('language_id',$user->language_id)->count(); 
             $total_words_opened = NaatiVocabularyUserOpenedWord::where('user_id',$user->id)->count(); 
             // $practicecount =NaatiPracticeDialogue::select('id')->count();
            
-       return view('users.index',compact('categories','practicedialogueCount','vipexamCount','mocktestCount','completedPracticeDialogue','completedvipexam','total_words','total_words_opened'));
+       return view('users.index',compact('categories','completedMockTest','practicedialogueCount','vipexamCount','mocktestCount','completedPracticeDialogue','completedvipexam','total_words','total_words_opened'));
     }
 }

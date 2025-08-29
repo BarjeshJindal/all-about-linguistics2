@@ -373,3 +373,6 @@ span.most-popular-badge {
   color: #000000;
   font-weight: bold;
 }
+.category-parent {
+    border-bottom: 2px solid #ebcece6e;
+}

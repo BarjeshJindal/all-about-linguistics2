@@ -35,10 +35,16 @@
                                 if ($practicedialogueCount > 0) {
                                     $percentageCompleted = round(($completedPracticeDialogue / $practicedialogueCount) * 100, 2);
                                 }
+                                
                             @endphp
+                            {{-- {{dd(  $percentageCompleted)}} --}}
                             <div class="d-flex align-items-end gap-2 justify-content-between">
                                 <div class="text-end flex-shrink-0">
-                                    <div id="total-orders-chart" data-colors="#ff5b5b,#F6F7FB"></div>
+                                    <div id="total-orders-chart"
+                                        data-colors="#ff5b5b,#F6F7FB"
+                                        data-completed="{{ $completedPracticeDialogue ?? 0 }}"
+                                        data-total="{{ $practicedialogueCount ?? 0 }}">
+                                    </div>
                                     <h3 class="completed">Completed: {{ isset($completedPracticeDialogue) ? $completedPracticeDialogue : 0 }}</h3>
                                 </div>
                                 <div class="text-end">
@@ -146,8 +152,15 @@
                         </div>
                         <div class="card-body pt-0">
                             <div class="d-flex align-items-center gap-2 justify-content-between">
+                                @php
+                                $mockpercentageCompleted = 0;
+                                if ($mocktestCount > 0) {
+                                    $mockpercentageCompleted = round(($completedMockTest / $mocktestCount) * 100, 2);
+                                }
+                                
+                                @endphp
                                 <span class="badge bg-success rounded-pill fs-13">
-                                    32% <i class="ti ti-trending-up"></i>
+                                  {{ $mockpercentageCompleted}}% <i class="ti ti-trending-up"></i>
                                 </span>
                                 <div class="text-end">
                                     <h3 class="fw-semibold">{{ $mocktestCount}}</h3>
@@ -210,7 +223,7 @@
                             @endphp                         
                             <div class="d-flex align-items-center gap-2 justify-content-between">
                                 <span class="badge bg-info rounded-pill fs-13">
-                                {{ $words_percentage}} <i class="ti ti-trending-down"></i>
+                                {{ $words_percentage}} % <i class="ti ti-trending-down"></i>
                                 </span>
                                 <div class="text-end">
                                     <h3 class="fw-semibold">{{$total_words}}</h3>
@@ -288,6 +301,12 @@
 </div>
 </div>
 @endsection
+{{-- <script>
+    window.chartData = {
+        completed: {{ $completedPracticeDialogue ?? 0 }},
+        total: {{ $practicedialogueCount ?? 0 }}
+    };
+</script> --}}
 
 @section('scripts')
     @vite(['resources/js/pages/dashboard.js'])

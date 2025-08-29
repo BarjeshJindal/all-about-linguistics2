@@ -43,7 +43,7 @@
 
         <div class="mt-2 d-flex segments-btn">
             <div class="start-stop-btn">
-                <button class="startRecording btn btn-danger">Start</button>
+                <button class="startRecording btn btn-danger">Play</button>
                 <button class="stopRecording btn btn-danger" disabled>Stop</button>
             </div>
 
