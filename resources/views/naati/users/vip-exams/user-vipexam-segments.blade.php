@@ -695,22 +695,77 @@
 
 
             document.addEventListener("DOMContentLoaded", () => {
-                document.querySelectorAll('.next-tab, .prev-tab').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const targetSelector = this.getAttribute('data-target');
-                        const targetTab = document.querySelector(`a[href="${targetSelector}"]`);
+            // Disable all next/prev at the start
+            document.querySelectorAll('.next-tab, .prev-tab').forEach(btn => {
+                btn.disabled = true;
+            });
 
-                        if (targetTab) {
-                            const tabInstance = new bootstrap.Tab(targetTab);
-                            tabInstance.show();
-                            targetTab.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'start'
-                            });
-                        }
+            // For each segment container, hook Start/Stop buttons
+            document.querySelectorAll(".segment-container").forEach(container => {
+                const startBtn = container.querySelector(".startRecording");
+                const stopBtn = container.querySelector(".stopRecording");
+                const nextBtn = container.querySelector(".next-tab");
+                const prevBtn = container.querySelector(".prev-tab");
+
+                if (startBtn && stopBtn) {
+                    startBtn.addEventListener("click", () => {
+                        // Disable next/prev when recording starts
+                        if (nextBtn) nextBtn.disabled = true;
+                        if (prevBtn) prevBtn.disabled = true;
                     });
+
+                    stopBtn.addEventListener("click", () => {
+                        // Enable next/prev after recording stops
+                        if (nextBtn) nextBtn.disabled = false;
+                        if (prevBtn) prevBtn.disabled = false;
+                    });
+                }
+            });
+
+            // ✅ NEXT button → move + auto start
+
+            document.querySelectorAll('.next-tab').forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetSelector = this.getAttribute('data-target');
+                    const targetTab = document.querySelector(`a[href="${targetSelector}"]`);
+
+                    if (targetTab) {
+                        const tabInstance = new bootstrap.Tab(targetTab);
+                        tabInstance.show();
+
+                        const targetSegment = document.querySelector(targetSelector);
+                        const startBtn = targetSegment.querySelector(".startRecording");
+
+                        // ✅ check: recording exists if user-waveform has content
+                        const userWaveform = targetSegment.querySelector(".user-recorded-waveform");
+                        const hasRecording = userWaveform && userWaveform.children.length > 0;
+
+                        if (!hasRecording && startBtn) {
+                            startBtn.click(); // auto-start only if no recording yet
+                        }
+
+                        targetTab.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 });
             });
+
+
+            // ✅ PREVIOUS button → move only, no auto start
+            document.querySelectorAll('.prev-tab').forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetSelector = this.getAttribute('data-target');
+                    const targetTab = document.querySelector(`a[href="${targetSelector}"]`);
+
+                    if (targetTab) {
+                        const tabInstance = new bootstrap.Tab(targetTab);
+                        tabInstance.show();
+
+                        // 👇 no auto start here
+                        targetTab.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+           });
 
 
             document.addEventListener("DOMContentLoaded", () => {

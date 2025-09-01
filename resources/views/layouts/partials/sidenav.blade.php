@@ -126,6 +126,30 @@
                     <span class="menu-text"> Add Category </span>
                 </a>
             </li>
+            <li class="side-nav-item">
+                <a href="javascript:void(0);" class="side-nav-link" data-bs-toggle="collapse"
+                    data-bs-target="#mockTestMenu">
+                    <span class="menu-icon"><i class="ti ti-help-circle"></i></span>
+                    <span class="menu-text">Faqs</span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="collapse side-nav-sub" id="mockTestMenu">
+                     <li class="side-nav-item">
+                        <a href="{{ route('admin.faqs.add') }}" class="side-nav-link">
+                             <span class="menu-icon"><i class="ti ti-circle-plus"></i></span>
+                            <span class="menu-text"> Add Faqs </span>
+                        </a>
+                    </li>
+                     <li class="side-nav-item">
+                        <a href="{{ route('admin.faqs.list') }}" class="side-nav-link">
+                            <span class="menu-icon"><i class="ti ti-edit"></i></span>
+                            <span class="menu-text"> Manage Faqs </span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+           
 
             <li class="side-nav-item">
                 <a href="javascript:void(0);" class="side-nav-link" data-bs-toggle="collapse"

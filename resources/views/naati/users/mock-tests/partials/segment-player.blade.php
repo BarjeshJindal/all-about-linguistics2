@@ -48,10 +48,10 @@
             </div>
 
             <!-- Answer Modal Trigger -->
-            <button class="btn btn-info p-2 btn-sm show-answer" data-answer-eng="{{ $segment->answer_eng }}"
+            {{-- <button class="btn btn-info p-2 btn-sm show-answer" data-answer-eng="{{ $segment->answer_eng }}"
                 data-answer-hindi="{{ $segment->answer_other_language }}">
                 Answer
-            </button>
+            </button> --}}
         </div>
         <div class="d-flex justify-content-between mt-4">
 

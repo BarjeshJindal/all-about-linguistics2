@@ -8,10 +8,10 @@
                 <label for="translationMode" class="search-label form-label">Translation Mode:</label>
                 <select id="translationMode" class="form-select" style="border: 2px solid #e1c21e;">
                     <option value="native_to_english" {{ request('direction') == 'native_to_english' ? 'selected' : '' }}>
-                        Native ⇒ English
+                        English ⇒ Native
                     </option>
                     <option value="english_to_native" {{ request('direction') == 'english_to_native' ? 'selected' : '' }}>
-                        English ⇒ Native
+                        Native ⇒ English
                     </option>
                 </select>
             </form>

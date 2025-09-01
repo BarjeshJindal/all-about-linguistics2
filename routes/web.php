@@ -33,6 +33,8 @@ use App\Http\Controllers\Naati\VipExamController;
 use App\Http\Controllers\Naati\UserVipExamController;
 use App\Http\Controllers\Naati\CategoryController;
 use App\Http\Controllers\Naati\UserDashboardController;
+use App\Http\Controllers\Naati\FaqController;
+use App\Http\Controllers\Naati\UserFaqController;
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
@@ -76,6 +78,16 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     // language
     Route::get('/add-language',[LanguageController::class,'index'])->name('language.index');
     Route::post('/store-language',[LanguageController::class,'store'])->name('language.store');
+    // Faqs
+    Route::get('/add-faqs',[FaqController::class,'addFaqs'])->name('faqs.add');
+    Route::post('/store-faqs',[FaqController::class,'storeFaqs'])->name('faqs.store');
+
+    Route::get('/manage-faqs',[FaqController::class,'faqsList'])->name('faqs.list');
+    Route::post('/store-faqs',[FaqController::class,'storeFaqs'])->name('faqs.store');
+    Route::get('/edit/{id}/faq',[FaqController::class,'faqEdit'])->name('faqs.edit');
+    Route::put('/update-faqs/{id}/faq',[FaqController::class,'faqUpdate'])->name('faqs.update');
+    Route::delete('/delete/{id}/faq', [FaqController::class, 'faqDelete'])->name('faqs.delete');
+ 
 
     // Practice Dialogue
     Route::get('/practices', [PracticeDialogueController::class, 'index'])->name('practices.index');
@@ -250,10 +262,10 @@ Route::middleware(['auth:web'])->group(function () {
         Route::get('/videos', function () {
             return view('naati.users.videos');
         })->name('users.videos');
-
-        Route::get('/faq', function () {
-            return view('naati.users.faq');
-        })->name('users.faq');
+        Route::get('/faq',[UserFaqController::class,'showFaqs'])->name('users.faq');
+        // Route::get('/faq', function () {
+        //     return view('naati.users.faq');
+        // })->name('users.faq');
 
 
         Route::post('/user-mock-test-dialogues/submit', [UserMockTestDialogueController::class, 'submitResponses'])

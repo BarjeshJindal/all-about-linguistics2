@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'CCL Frequently Asked Questions', 'topbarTitle' => 'CCL Frequently Asked Questions'])
+{{-- @extends('layouts.vertical', ['title' => 'CCL Frequently Asked Questions', 'topbarTitle' => 'CCL Frequently Asked Questions'])
 
 @section('content')
     <div class="card p-4">
@@ -255,4 +255,75 @@
             </div>
         </div>
     </div>
+@endsection --}}
+@extends('layouts.vertical', [
+    'title' => 'CCL Frequently Asked Questions',
+    'topbarTitle' => 'CCL Frequently Asked Questions'
+])
+
+@section('content')
+<div class="card p-4">
+    <div class="container">
+        <h2 class="text-3xl font-bold mb-6 text-center mb-md-4">Frequently Asked Questions</h2>
+
+        @if($faqs->isEmpty())
+            <div class="text-center py-5">
+                <h4>No FAQs available at the moment.</h4>
+            </div>
+        @else
+            <div class="row">
+                <!-- Left Column -->
+                <div class="col-md-6">
+                    <div class="accordion" id="faqLeft">
+                        @foreach($leftFaqs as $index => $faq)
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingLeft{{ $index }}">
+                                    <button class="accordion-button {{ $index !== 0 ? 'collapsed' : '' }}" 
+                                            type="button" 
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapseLeft{{ $index }}">
+                                        {{ $faq->question }}
+                                    </button>
+                                </h2>
+                                <div id="collapseLeft{{ $index }}" 
+                                     class="accordion-collapse collapse {{ $index === 0 ? 'show' : '' }}" 
+                                     data-bs-parent="#faqLeft">
+                                    <div class="accordion-body">
+                                        {!! nl2br(e($faq->answer)) !!}
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="col-md-6">
+                    <div class="accordion" id="faqRight">
+                        @foreach($rightFaqs as $index => $faq)
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingRight{{ $index }}">
+                                    <button class="accordion-button collapsed" 
+                                            type="button" 
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapseRight{{ $index }}">
+                                        {{ $faq->question }}
+                                    </button>
+                                </h2>
+                                <div id="collapseRight{{ $index }}" 
+                                     class="accordion-collapse collapse" 
+                                     data-bs-parent="#faqRight">
+                                    <div class="accordion-body">
+                                        {!! nl2br(e($faq->answer)) !!}
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
+</div>
 @endsection
+

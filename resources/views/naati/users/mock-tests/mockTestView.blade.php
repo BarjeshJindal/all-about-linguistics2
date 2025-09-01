@@ -67,7 +67,7 @@
                 <div class="col-lg-9 bg-camera">
                     <div class="diloce-title">
                         <h2>Dialogue {{ $dIndex + 1 }} - {{ $dialogue->title }}</h2>
-                        <p class="desc">{{ $dialogue->description }}</p>
+                        {{-- <p class="desc">{{ $dialogue->description }}</p> --}}
                     </div>
 
                     <!-- Camera UI -->
