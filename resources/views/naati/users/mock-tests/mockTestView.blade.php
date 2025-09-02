@@ -398,6 +398,7 @@
                     cursorColor: '#ccc',
                     responsive: true,
                     hideScrollbar: true,
+                    interact: false,
                 });
 
                 wavesurfers[segmentId].load(
@@ -467,6 +468,38 @@
                 };
 
             startBtn.onclick = async () => {
+                 // If already recorded once, warn before overwriting
+                // If already recorded once, warn before overwriting
+                if (recordedBlob) {
+                    const result = await Swal.fire({
+                        title: "Warning",
+                        text: "Are you sure you want to repeat the segment?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Yes, Try Again",
+                        cancelButtonText: "Cancel"
+                    });
+
+                    if (!result.isConfirmed) {
+                        return; // stop here if cancelled
+                    }
+
+                    // disable next/prev again until new recording is complete
+                    const nextBtn = container.querySelector(".next-tab");
+                    if (nextBtn) nextBtn.disabled = true;
+
+                    const prevBtn = container.querySelector(".prev-tab");
+                    if (prevBtn) prevBtn.disabled = true;
+
+                    // reset state
+                    recordedBlob = null;
+                    playBtn.disabled = true;
+                }
+
+                // reset state
+                recordedBlob = null;
+                playBtn.disabled = true;
+
                 startBtn.disabled = true;
                 startBtn.innerText = 'Playing segment...';
 
@@ -519,6 +552,7 @@
                                     height: 80,
                                     barWidth: 1,
                                     barGap: 2,
+                                    interact: false,
                                 });
 
                                 micWaveform.load(audioURL);
@@ -554,6 +588,11 @@
                     startBtn.innerText = 'Start';
                     if (recorder && recorder.state !== "inactive") recorder.stop();
                     if (micStream) micStream.getTracks().forEach(t => t.stop());
+                      // ✅ Enable Next button for this segment
+                    const nextBtn = container.querySelector(".next-tab");
+                    if (nextBtn) nextBtn.disabled = false;
+                    const prevBtn = container.querySelector(".prev-tab");
+                    if (prevBtn) prevBtn.disabled = false;
                 };
 
                 playBtn.onclick = () => {
@@ -622,11 +661,39 @@
 
             // Initially set progress
             updateProgress(currentIndex);
-
-            document.querySelectorAll('.next-tab, .prev-tab').forEach(button => {
+             // ✅ NEXT button → move + auto start
+             document.querySelectorAll('.next-tab, .prev-tab').forEach(btn => {
+                btn.disabled = true;
+            });
+            document.querySelectorAll('.next-tab').forEach(button => {
                 button.addEventListener('click', function() {
                     const targetSelector = this.getAttribute('data-target');
                     const targetTab = document.querySelector(`a[href="${targetSelector}"]`);
+
+                    if (targetTab) {
+                        const tabInstance = new bootstrap.Tab(targetTab);
+                        tabInstance.show();
+
+                        const targetSegment = document.querySelector(targetSelector);
+                        const startBtn = targetSegment.querySelector(".startRecording");
+
+                        // ✅ check: recording exists if user-waveform has content
+                        const userWaveform = targetSegment.querySelector(".user-recorded-waveform");
+                        const hasRecording = userWaveform && userWaveform.children.length > 0;
+
+                        if (!hasRecording && startBtn) {
+                            startBtn.click(); // auto-start only if no recording yet
+                        }
+
+                        targetTab.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+            document.querySelectorAll('.prev-tab').forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetSelector = this.getAttribute('data-target');
+                    const targetTab = document.querySelector(`a[href="${targetSelector}"]`);
+                    
 
                     if (targetTab) {
                         const tabInstance = new bootstrap.Tab(targetTab);
@@ -649,7 +716,7 @@
                 });
             });
         });
-
+         
         // code to update timer 
         document.addEventListener("DOMContentLoaded", function() {
             let duration = {{ $practice->duration * 60 }}; // in seconds (default 10 min if null)

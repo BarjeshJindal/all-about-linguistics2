@@ -31,8 +31,8 @@
                     @foreach($faqs as $faq)
                         <tr>
                             <td>{{$loop->iteration }}</td>
-                            <td>{{ Str::limit($faq->question, 80) }}</td>
-                            <td>{{ Str::limit($faq->answer, 100) }}</td>
+                            <td>{{ Str::limit($faq->question, 50) }}</td>
+                            <td>{{ Str::limit($faq->answer, 50) }}</td>
                             <td>
                                 <a href="{{ route('admin.faqs.edit', $faq->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
