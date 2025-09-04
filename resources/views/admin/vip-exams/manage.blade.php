@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'Manage Practice Dialogues', 'topbarTitle' => 'Manage Practice Dialogues'])
+@extends('layouts.vertical', ['title' => 'Manage Vip Exam ', 'topbarTitle' => 'Manage Vip Exam'])
 
 @section('content')
 <div class="card shadow-sm border-0">
@@ -9,13 +9,13 @@
         @endif
 
         <div class="d-flex justify-content-between mb-3">
-            <h4>All Practice Dialogues</h4>
+            <h4>All Vip Exam</h4>
             {{-- <a href="{{ route('admin.faqs.create') }}" class="btn btn-primary">+ Add FAQ</a> --}}
         </div>
 
         @if($practiceDialogues->isEmpty())
             <div class="text-center py-4">
-                <p>No Practice Dialogues available.</p>
+                <p>No Vip Exam available.</p>
             </div>
         @else
             <table class="table table-bordered table-striped">
@@ -35,7 +35,7 @@
                             <td>{{ Str::limit($practiceDialogue->title, 80) }}</td>
                             <td>{{ $practiceDialogue->created_at->format('d M Y') }}</td>
                             <td>
-                                <a href="{{ route('admin.pratice-dialogue.edit', $practiceDialogue->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{{ route('admin.vip-exams.edit', $practiceDialogue->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
                                 {{-- <form id="delete-form-{{ $faq->id }}" action="{{ route('admin.faqs.delete', $faq->id) }}" method="POST" class="d-inline">
                                     @csrf

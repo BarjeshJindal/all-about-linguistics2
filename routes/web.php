@@ -108,6 +108,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
 
     Route::get('/vip-exam/create', [VipExamController::class, 'create'])->name('vip-exams.create');
     Route::post('/vip-exam/store', [VipExamController::class, 'store'])->name('vip-exams.store');
+    Route::get('/vip-exam/manage', [VipExamController::class, 'manageVipExam'])->name('vip-exams.manage');
+    Route::get('/edit/{id}/vip-exam', [VipExamController::class, 'editVipExam'])->name('vip-exams.edit');
+    Route::put('/update/{id}/vip-exam', [VipExamController::class, 'vipexamUpdate'])->name('vip-exams.update');
+
+
     Route::get('/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
     Route::put('/feedback/{user_recording}', [FeedbackController::class, 'update'])->name('feedback.update');
 

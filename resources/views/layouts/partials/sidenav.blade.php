@@ -214,13 +214,33 @@
                     <span class="menu-text"> Types of Plans</span>
                 </a>
             </li> --}}
-
-            <li class="side-nav-item">
-                <a href="{{ route('admin.vip-exams.create')}}" class="side-nav-link">
-                    <span class="menu-icon"><i class="ti ti-devices-question"></i></span>
-                    <span class="menu-text"> Add VIP Exam Material</span>
+           
+             <li class="side-nav-item">
+                <a href="javascript:void(0);" class="side-nav-link" data-bs-toggle="collapse"
+                    data-bs-target="#vipexamMenu">
+                    <span class="menu-icon"><i class="ti ti-pencil"></i></span>
+                    <span class="menu-text">Vip Exam</span>
+                    <span class="menu-arrow"></span>
                 </a>
+
+                <ul class="collapse side-nav-sub" id="vipexamMenu">
+                    <li class="side-nav-item">
+                        <a href="{{ route('admin.vip-exams.create')}}" class="side-nav-link">
+                            <span class="menu-icon"><i class="ti ti-devices-question"></i></span>
+                            <span class="menu-text"> Add VIP Exam Material</span>
+                        </a>
+                    </li>
+                    <li class="side-nav-item">
+                        <a href="{{ route('admin.vip-exams.manage')}}" class="side-nav-link">
+                            <span class="menu-icon"><i class="ti ti-devices-question"></i></span>
+                            <span class="menu-text"> Manage VIP Exam Material</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
+
+            
+            
 
             <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#vocabularyMenu" aria-expanded="false"
