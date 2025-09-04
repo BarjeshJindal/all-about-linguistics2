@@ -96,6 +96,10 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::get('/segments/{practice}', [SegmentController::class, 'index'])->name('segments.index');
     Route::get('/segments/{practice}/create', [SegmentController::class, 'create'])->name('segments.create');
     Route::post('/segments/{practice}/store', [SegmentController::class, 'store'])->name('segments.store');
+    Route::get('/manage-practice-dialogue', [PracticeDialogueController::class, 'manageView'])->name('practices.manage');
+    Route::get('/edit/{id}/practice-dialogue', [PracticeDialogueController::class, 'practiceDialogueEdit'])->name('pratice-dialogue.edit');
+    Route::put('/update/{id}/practice-dialogue', [PracticeDialogueController::class, 'practiceDialogueUpdate'])->name('pratice-dialogue.update');
+
     // Route::get('/segment/create/{id}', [SegmentController::class, 'create'])->name('practices.create');
     // Route::post('/practices/store', [PracticeDialogueController::class, 'store'])->name('practices.store');
 

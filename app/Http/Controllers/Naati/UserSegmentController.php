@@ -50,7 +50,7 @@ class UserSegmentController extends Controller
         ]);
 
         try {
-            $responses  = $request->file('responses');
+            $responses  = $request->file('responses', []); // [] if not present
             $dialogueId = $request->input('dialogue_id');
 
             // 🚨 Check if no responses were uploaded
@@ -71,13 +71,14 @@ class UserSegmentController extends Controller
             $userDialogue->save(); 
 
             // Save user segments with segment_number
+            $i = 1;
             foreach ($responses as $segmentId => $audioFile) {
                 $path = $audioFile->store("user-responses/{$userId}/practice-dialogue-audios", 'public');
 
                 $userSegment = new NaatiUserPracticeDialogueSegment();
                 $userSegment->segment_path     = $path;
                 $userSegment->user_dialogue_id = $userDialogue->id;
-                $userSegment->segment_number   = $segmentId; // 👈 use original segmentId
+                $userSegment->segment_number   = $i++; // 1,2,3,...
                 $userSegment->save();
             }
 
