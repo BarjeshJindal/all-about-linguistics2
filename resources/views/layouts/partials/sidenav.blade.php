@@ -171,7 +171,7 @@
             <li class="side-nav-item">
                 <a href="javascript:void(0);" class="side-nav-link" data-bs-toggle="collapse"
                     data-bs-target="#mockTestMenu">
-                    <span class="menu-icon"><i class="ti ti-pencil"></i></span>
+                    <span class="menu-icon"><i class="ti ti-notes"></i></span>
                     <span class="menu-text">Mock Test</span>
                     <span class="menu-arrow"></span>
                 </a>

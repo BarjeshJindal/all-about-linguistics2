@@ -43,7 +43,7 @@
                             <div id="waveform-{{ $practiceSegment->id }}" style="width: 100%; height: 80px;"></div>
                             <button type="button" class="btn btn-primary play-btn" data-id="segment-{{ $practiceSegment->id }}">▶ Play</button>
 
-                            <label class="form-label">Audio File (MP3)</label>
+                            <label class="form-label audio-file">Audio File (MP3)</label>
                             {{-- @if($practiceSegment->segment_path)
                                 <p>Current File:
                                     <a href="{{ asset('storage/'.$practiceSegment->segment_path) }}" target="_blank">Listen</a>
@@ -67,7 +67,7 @@
 
                         <div class="row p-2">
                             <div class="mb-1 p-2 col-sm-6">
-                                <label class="form-label">Answer (English)</label>
+                                <label class="form-label answer">Answer (English)</label>
                                 <input type="text" name="segments[{{ $loopIndex }}][answer_eng]" value="{{ $practiceSegment->answer_eng }}" class="form-control" required>
                             </div>
                             <div class="mb-1 p-2 col-sm-6">

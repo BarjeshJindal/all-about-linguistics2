@@ -5,7 +5,7 @@
 <div class="card shadow-sm border-0">
     <div class="card-body">
         @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+            <div class="alert alert-success success">{{ session('success') }}</div>
         @endif
 
         @if ($errors->any())
@@ -26,7 +26,7 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Description</label>
+                <label class="form-label description">Description</label>
                 <textarea class="form-control" name="description" rows="5">{{ $practiceDialogue->description}}</textarea>
             </div>
 
@@ -49,7 +49,7 @@
                                     <a href="{{ asset('storage/'.$practiceSegment->segment_path) }}" target="_blank">Listen</a>
                                 </p>
                             @endif --}}
-                            <input type="file" name="segments[{{ $loopIndex }}][segment_path]" class="form-control" accept=".mp3,.wav">
+                            <input type="file" name="segments[{{ $loopIndex }}][segment_path]" class="form-control mt-3" accept=".mp3,.wav">
                         </div>
 
                         <div class="mb-1 p-2">
@@ -62,7 +62,7 @@
                                     <a href="{{ asset('storage/'.$practiceSegment->sample_response) }}" target="_blank">Listen</a>
                                 </p>
                             @endif --}}
-                            <input type="file" name="segments[{{ $loopIndex }}][sample_response]" class="form-control" accept=".mp3,.wav">
+                            <input type="file" name="segments[{{ $loopIndex }}][sample_response]" class="form-control mt-3 " accept=".mp3,.wav">
                         </div>
 
                         <div class="row p-2">
@@ -70,6 +70,7 @@
                                 <label class="form-label">Answer (English)</label>
                                 <input type="text" name="segments[{{ $loopIndex }}][answer_eng]" value="{{ $practiceSegment->answer_eng }}" class="form-control" required>
                             </div>
+                            
                             <div class="mb-1 p-2 col-sm-6">
                                 <label class="form-label answer-languages-label">Answer Second Language</label>
                                 <input type="text" name="segments[{{ $loopIndex }}][answer_second_language]" value="{{ $practiceSegment->answer_other_language }}" class="form-control" required>
@@ -82,7 +83,7 @@
             <!-- Add Segment Button -->
             <button type="button" class="btn btn-success mt-3" id="add-segment">+ Add Segment</button>
 
-            <button type="submit" class="btn btn-warning mt-3">Update</button>
+            <button type="submit" class="btn btn-warning mt-3 update">Update</button>
         </form>
     </div>
 </div>

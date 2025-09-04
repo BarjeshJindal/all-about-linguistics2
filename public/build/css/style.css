@@ -1,3 +1,12 @@
+
+li.side-nav-item ul{
+    padding-left: 0px;
+}
+li.side-nav-item div#vocabularyMenu ul.side-nav-second-level, ul#mockTestMenu {
+    padding-left: 20px !important;
+}
+
+
 /* dasboard css start */
  
 h3.completed {
@@ -50,11 +59,7 @@ button.accordion-button.collapsed {
     border-radius: 7px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
-@media (max-width: 932px) {
-  .tutorial-video iframe {
-    height:auto
-}
-}
+
 
 /* crtae -role-page-start */
 
@@ -287,7 +292,7 @@ th,td {
 }
 
 /* Button */
-.choose-btn {
+/* .choose-btn {
   background: #e1c21e;
   color: white;
   padding: 12px 18px;
@@ -298,16 +303,16 @@ th,td {
   cursor: pointer !important;
   transition: 0.3s;
   width: 100%;
-}
+} */
 
 .choose-btn:hover {
     background: #000000;
 }
 
 /* Popular Badge */
-.popular {
+/* .popular {
   border-color: #e1c21e;
-}
+} */
 
 span.most-popular-badge {
     position: absolute;
@@ -375,4 +380,24 @@ span.most-popular-badge {
 }
 .category-parent {
     border-bottom: 2px solid #ebcece6e;
+}
+.popular {
+  border-color: #e1c21e;
+}
+.choose-btn {
+  background: #e1c21e;
+  color: white;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer !important;
+  transition: 0.3s;
+  width: 100%;
+}
+@media (max-width: 932px) {
+  .tutorial-video iframe {
+    height:auto
+}
 }
