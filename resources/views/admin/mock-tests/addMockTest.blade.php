@@ -57,7 +57,7 @@
 
                         <div class="mb-3">
                             <label>Description</label>
-                            <textarea name="dialogues[0][description]" class="form-control" rows="3"></textarea>
+                            <textarea name="dialogues[{{ $d }}][description]" class="form-control" rows="3"></textarea>
                         </div>
 
                         <div class="mb-3">

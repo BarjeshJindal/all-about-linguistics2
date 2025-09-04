@@ -145,6 +145,10 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     // Route::get('/mock-tests/', [MockTestController::class, 'index'])->name('mock-tests.index');
     Route::get('/mock-tests/create', [AdminMockTestController::class, 'create'])->name('mock-tests.addMockTest');
     Route::post('/mock-tests/store', [AdminMockTestController::class, 'store'])->name('mock-tests.store');
+    Route::get('/mock-tests/manage', [AdminMockTestController::class, 'manage'])->name('mock-tests.manage');
+    Route::get('/mock-tests/{id}/edit', [AdminMockTestController::class, 'edit'])->name('mock-tests.edit');
+    Route::put('/mock-tests/{id}/update', [AdminMockTestController::class, 'updateMockTest'])->name('mock-tests.update');
+    
     // Route::get('/mock-tests/{mockTest}', [MockTestController::class, 'show'])->name('mock-tests.show');
     // Route::get('/mock-tests/{mockTest}/edit', [MockTestController::class, 'edit'])->name('mock-tests.edit');
     // Route::put('/mock-tests/{mockTest}', [MockTestController::class, 'update'])->name('mock-tests.update');

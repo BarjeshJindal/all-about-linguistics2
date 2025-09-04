@@ -190,6 +190,13 @@
                         
                         </a>
                     </li>
+                    <li class="side-nav-item">
+                        <a href="{{ route('admin.mock-tests.manage') }}">
+                            <span class="menu-icon"><i class="ti ti-edit"></i></span>
+                            <span class="menu-text">Manage Mock Tests</span>
+                        
+                        </a>
+                    </li>
                 </ul>
             </li>
 

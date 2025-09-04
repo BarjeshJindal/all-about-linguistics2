@@ -17,7 +17,7 @@ use App\Models\NaatiMockTest;
 use App\Models\NaatiMockTestDialogue;
 use App\Models\NaatiMockTestDialogueSegment;
 use App\Models\NaatiUserMockTest;
-
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -273,6 +273,119 @@ class AdminMockTestController extends Controller
         $mockTest->save();
 
         return back()->with('success', 'Feedback updated successfully!');
+    }
+
+   public function manage(){
+    $practiceDialogues = NaatiMockTest::latest()->get();
+    return view('admin.mock-tests.manage-mocktest',compact('practiceDialogues'));
+   }
+
+   public function edit($id){
+         $mocktest = NaatiMockTest::findOrFail($id);
+
+        // Get dialogues
+        $dialogues = NaatiMockTestDialogue::whereIn('id', [
+            $mocktest->dialogue_one_id,
+            $mocktest->dialogue_two_id
+        ])->get();
+
+        // Get all segments for both dialogues
+        $segments = NaatiMockTestDialogueSegment::whereIn('dialogue_id', [
+            $mocktest->dialogue_one_id,
+            $mocktest->dialogue_two_id
+        ])->get();
+
+        return view('admin.mock-tests.edit-mocktest', compact('mocktest', 'dialogues', 'segments'));
+    }
+
+
+    public function updateMockTest(Request $request, $id)
+    {
+        // ✅ Validation
+        $request->validate([
+            'title'    => 'required|string|max:255',
+            'duration' => 'required|integer|min:1',
+
+            // Dialogue one
+            'dialogue_one_title'       => 'required|string|max:255',
+            'dialogue_one_description' => 'nullable|string',
+            'dialogue_one_flow'        => 'required|in:english_to_other,other_to_english',
+
+            // Dialogue two
+            'dialogue_two_title'       => 'required|string|max:255',
+            'dialogue_two_description' => 'nullable|string',
+            'dialogue_two_flow'        => 'required|in:english_to_other,other_to_english',
+
+            // Segments
+            'segments.*.segment_path'      => 'nullable|file|mimes:mp3,wav|max:10240',
+            'segments.*.sample_response'   => 'nullable|file|mimes:mp3,wav|max:10240',
+            'segments.*.answer_eng'        => 'nullable|string|max:1000',
+            'segments.*.answer_second_language' => 'nullable|string|max:1000',
+        ]);
+
+        // ✅ Find mock test
+        $mocktest = NaatiMockTest::findOrFail($id);
+
+        // ✅ Update mocktest
+        $mocktest->update([
+            'title'    => $request->title,
+            'duration' => $request->duration,
+        ]);
+
+        // ✅ Update dialogue one
+        $dialogueOne = NaatiMockTestDialogue::find($mocktest->dialogue_one_id);
+        if ($dialogueOne) {
+            $dialogueOne->update([
+                'title'            => $request->dialogue_one_title,
+                'description'      => $request->dialogue_one_description,
+                'translation_flow' => $request->dialogue_one_flow,
+            ]);
+        }
+
+        // ✅ Update dialogue two
+        $dialogueTwo = NaatiMockTestDialogue::find($mocktest->dialogue_two_id);
+        if ($dialogueTwo) {
+            $dialogueTwo->update([
+                'title'            => $request->dialogue_two_title,
+                'description'      => $request->dialogue_two_description,
+                'translation_flow' => $request->dialogue_two_flow,
+            ]);
+        }
+
+        // ✅ Handle segments
+        if ($request->has('segments')) {
+            foreach ($request->segments as $segmentData) {
+                $segment = !empty($segmentData['id'])
+                    ? NaatiMockTestDialogueSegment::find($segmentData['id'])
+                    : new NaatiMockTestDialogueSegment(['dialogue_id' => $segmentData['dialogue_id']]);
+
+                if (!$segment) continue;
+
+                // Handle segment audio
+                if (isset($segmentData['segment_path']) && $segmentData['segment_path'] instanceof \Illuminate\Http\UploadedFile) {
+                    if ($segment->segment_path && Storage::disk('public')->exists($segment->segment_path)) {
+                        Storage::disk('public')->delete($segment->segment_path);
+                    }
+                    $segment->segment_path = $segmentData['segment_path']->store('mocktest-audios', 'public');
+                }
+
+                // Handle sample response
+                if (isset($segmentData['sample_response']) && $segmentData['sample_response'] instanceof \Illuminate\Http\UploadedFile) {
+                    if ($segment->sample_response && Storage::disk('public')->exists($segment->sample_response)) {
+                        Storage::disk('public')->delete($segment->sample_response);
+                    }
+                    $segment->sample_response = $segmentData['sample_response']->store('mocktest-audios/sample-responses', 'public');
+                }
+
+                // Update text answers
+                $segment->answer_eng = $segmentData['answer_eng'] ?? $segment->answer_eng;
+                $segment->answer_other_language = $segmentData['answer_second_language'] ?? $segment->answer_other_language;
+
+                $segment->save();
+            }
+        }
+
+        return redirect()->back()->with('success', 'Mock Test updated successfully!');
     }
 
 
