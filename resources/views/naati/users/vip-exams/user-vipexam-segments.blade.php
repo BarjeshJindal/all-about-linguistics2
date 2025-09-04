@@ -132,7 +132,9 @@
                                 </div>
 
                                 <!-- Recording Section -->
-                                <div class="segment-container" data-segment-id="{{ $segment->id }}">
+                                <div class="segment-container"
+                                    data-segment-id="{{ $segment->id }}"
+                                    data-segment-number="{{ $loop->iteration }}">
                                     {{-- <h5>Record Your Response</h5> --}}
 
                                     <canvas width="400" height="100"></canvas>
@@ -637,61 +639,65 @@
 
 
             async function submitAllResponses() {
-                    const formData = new FormData();
-                    formData.append('dialogue_id', document.getElementById('dialogueIdInput').value);
+                const formData = new FormData();
+                formData.append('dialogue_id', document.getElementById('dialogueIdInput').value);
 
-                    for (let segmentId in responses) {
-                        // get all segment containers
-                        const segmentElements = document.querySelectorAll('.segment-container');
-
-                        // find this segment's position
-                        let segmentNumber = Array.from(segmentElements).findIndex(
-                            el => el.dataset.segmentId === segmentId
-                        ) + 1;
-
-                        const file = new File(
-                            [responses[segmentId]],
-                            `segment_${segmentNumber}.webm`,
-                            { type: "audio/webm" }
-                        );
-
-                        formData.append(`responses[${segmentNumber}]`, file); // use normalized segment number
+                for (let segmentId in responses) {
+                    const segmentElement = document.querySelector(`.segment-container[data-segment-id="${segmentId}"]`);
+                    
+                    if (!segmentElement) {
+                        console.error("No segment element for ID:", segmentId);
+                        continue;
                     }
 
-                    try {
-                        const response = await fetch("{{ route('user.vip-exam-segments.storeAll') }}", {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                            },
-                            body: formData,
-                        });
+                    const segmentNumber = segmentElement.dataset.segmentNumber;
 
-                        if (!response.ok) {
-                            // Try to parse JSON error
-                            const errorData = await response.json().catch(() => null);
+                    if (!segmentNumber) {
+                        console.error("No segment number for ID:", segmentId);
+                        continue;
+                    }
 
-                            if (errorData && errorData.error) {
-                                Swal.fire('Error', errorData.error, 'error');
-                            } else {
-                                const text = await response.text();
-                                console.error("Server error:", text);
-                                Swal.fire('Error', 'Server returned an error. Check console.', 'error');
-                            }
-                            return;
+                    const file = new File(
+                        [responses[segmentId]],
+                        `segment_${segmentNumber}.webm`,
+                        { type: "audio/webm" }
+                    );
+
+                    // 👇 Use numeric keys consistently
+                    formData.append(`responses[${segmentNumber}]`, file);
+                    formData.append(`segment_numbers[${segmentNumber}]`, segmentNumber);
+                }
+
+                try {
+                    const response = await fetch("{{ route('user.vip-exam-segments.storeAll') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                        },
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => null);
+                        if (errorData && errorData.error) {
+                            Swal.fire('Error', errorData.error, 'error');
+                        } else {
+                            Swal.fire('Error', 'Server returned an error.', 'error');
                         }
-
-                        const result = await response.json();
-                        Swal.fire('Success', result.message, 'success').then(() => {
-                            window.location.href = result.redirect;
-                        });
-
-                    } catch (err) {
-                        console.error("JS fetch error:", err);
-                        Swal.fire('Error', 'Could not submit responses.', 'error');
+                        return;
                     }
 
+                    const result = await response.json();
+                    Swal.fire('Success', result.message, 'success').then(() => {
+                        window.location.href = result.redirect;
+                    });
+
+                } catch (err) {
+                    console.error("JS fetch error:", err);
+                    Swal.fire('Error', 'Could not submit responses.', 'error');
+                }
             }
+
 
 
             document.addEventListener("DOMContentLoaded", () => {

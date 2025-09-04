@@ -71,14 +71,14 @@ class UserSegmentController extends Controller
             $userDialogue->save(); 
 
             // Save user segments with segment_number
-            $i = 1;
-            foreach ($responses as $segmentId => $audioFile) {
+            $segmentNumbers  = $request->input('segment_numbers', []);
+            foreach ($responses as $key => $audioFile) {
                 $path = $audioFile->store("user-responses/{$userId}/practice-dialogue-audios", 'public');
 
                 $userSegment = new NaatiUserPracticeDialogueSegment();
                 $userSegment->segment_path     = $path;
                 $userSegment->user_dialogue_id = $userDialogue->id;
-                $userSegment->segment_number   = $i++; // 1,2,3,...
+                $userSegment->segment_number   = (int) $segmentNumbers[$key]; // safe cast
                 $userSegment->save();
             }
 

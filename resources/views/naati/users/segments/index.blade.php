@@ -135,7 +135,9 @@
                                     </div>
 
                                     <!-- Recording Section -->
-                                    <div class="segment-container" data-segment-id="{{ $segment->id }}">
+                                    <div class="segment-container"
+                                    data-segment-id="{{ $segment->id }}"
+                                    data-segment-number="{{ $loop->iteration }}">
                                         {{-- <h5>Record Your Response</h5> --}}
 
                                         <canvas width="400" height="100"></canvas>
@@ -654,20 +656,24 @@
             });
 
 
-            async function submitAllResponses() {
+              async function submitAllResponses() {
                 const formData = new FormData();
-
-                // Add dialogue_id so Laravel validation works
                 formData.append('dialogue_id', document.getElementById('dialogueIdInput').value);
 
                 for (let segmentId in responses) {
-                    // get all segment containers
-                    const segmentElements = document.querySelectorAll('.segment-container');
+                    const segmentElement = document.querySelector(`.segment-container[data-segment-id="${segmentId}"]`);
+                    
+                    if (!segmentElement) {
+                        console.error("No segment element for ID:", segmentId);
+                        continue;
+                    }
 
-                    // find this segment's position
-                    let segmentNumber = Array.from(segmentElements).findIndex(
-                        el => el.dataset.segmentId === segmentId
-                    ) + 1;
+                    const segmentNumber = segmentElement.dataset.segmentNumber;
+
+                    if (!segmentNumber) {
+                        console.error("No segment number for ID:", segmentId);
+                        continue;
+                    }
 
                     const file = new File(
                         [responses[segmentId]],
@@ -675,10 +681,10 @@
                         { type: "audio/webm" }
                     );
 
-                    formData.append(`responses[${segmentId}]`, file);
-
+                    // 👇 Use numeric keys consistently
+                    formData.append(`responses[${segmentNumber}]`, file);
+                    formData.append(`segment_numbers[${segmentNumber}]`, segmentNumber);
                 }
-
 
                 try {
                     const response = await fetch("{{ route('user.segments.storeAll') }}", {
@@ -689,29 +695,16 @@
                         body: formData,
                     });
 
-                    // If response not OK (422, 500, etc.)
                     if (!response.ok) {
-                        // Try parsing JSON error
-                        let errorData = null;
-                        try {
-                            errorData = await response.json();
-                        } catch {
-                            errorData = null;
-                        }
-
+                        const errorData = await response.json().catch(() => null);
                         if (errorData && errorData.error) {
                             Swal.fire('Error', errorData.error, 'error');
-                        } else if (errorData && errorData.message) {
-                            Swal.fire('Error', errorData.message, 'error');
                         } else {
-                            const text = await response.text();
-                            console.error("Server error:", text);
-                            Swal.fire('Error', 'Server returned an unexpected error.', 'error');
+                            Swal.fire('Error', 'Server returned an error.', 'error');
                         }
-                        return; // stop further execution
+                        return;
                     }
 
-                    // ✅ Success
                     const result = await response.json();
                     Swal.fire('Success', result.message, 'success').then(() => {
                         window.location.href = result.redirect;
@@ -719,9 +712,10 @@
 
                 } catch (err) {
                     console.error("JS fetch error:", err);
-                    Swal.fire('Error', 'Could not submit responses. Please try again.', 'error');
+                    Swal.fire('Error', 'Could not submit responses.', 'error');
                 }
             }
+
 
 
            document.addEventListener("DOMContentLoaded", () => {

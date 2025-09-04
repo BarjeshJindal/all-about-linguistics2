@@ -159,14 +159,17 @@ class UserVipExamController extends Controller
             $userDialogue->save();
 
             // Save user segments
-            $i = 1;
-            foreach ($responses as $segmentNumber => $audioFile) {
+           $segmentNumbers  = $request->input('segment_numbers', []);
+            foreach ($responses as $key => $audioFile) {
+                 if (!isset($segmentNumbers[$key])) {
+                        continue; // skip invalid
+                    }
                 $path = $audioFile->store("user-responses/{$userId}/vip-exams-audios", 'public');
 
                 $userSegment = new NaatiUserVipExamSegment();
                 $userSegment->segment_path     = $path;
                 $userSegment->user_dialogue_id = $userDialogue->id;
-                $userSegment->segment_number   = $i++; // 1,2,3,...
+                $userSegment->segment_number   = (int) $segmentNumbers[$key]; // safe cast
                 $userSegment->save();
             }
             return response()->json([
