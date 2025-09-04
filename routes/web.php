@@ -161,6 +161,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::get('/add-words',[App\Http\Controllers\Admin\AdminVocabularyController::class,'addWords'])->name('vocabulary.words');
     Route::post('/store-word',[App\Http\Controllers\Admin\AdminVocabularyController::class,'storeWord'])->name('word.store');
     Route::get('/words/{category}',[App\Http\Controllers\Admin\AdminVocabularyController::class,'wordslist'])->name('vocabulary.words-list');
+    Route::get('/words/{id}/edit',[App\Http\Controllers\Admin\AdminVocabularyController::class,'wordEdit'])->name('vocabulary.words-edit');
+    Route::put('/words/{id}/update',[App\Http\Controllers\Admin\AdminVocabularyController::class,'wordUpdate'])->name('vocabulary.words-update');
+    
     // admin.vocabulary.words-list
     Route::post('/single-words-store', [App\Http\Controllers\Admin\AdminVocabularyController::class, 'storesingleWord'])->name('single-word.store');
 

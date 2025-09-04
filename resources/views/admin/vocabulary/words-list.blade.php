@@ -40,7 +40,7 @@
                                     @forelse($words as $word)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $word->word }}</td>
+                                        <td><a href="{{ route('admin.vocabulary.words-edit',$word->id)}}">{{ $word->word }}</a></td>
                                         <td>{{ $word->meaning}}</td> 
                                     </tr>
                                     @empty

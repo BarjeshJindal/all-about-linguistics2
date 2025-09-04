@@ -9,7 +9,7 @@ use App\Models\NaatiCategory;
 use App\Models\Language;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-
+use Illuminate\Validation\Rule;
 class AdminVocabularyController extends Controller
 {
     
@@ -204,4 +204,38 @@ class AdminVocabularyController extends Controller
         return view('admin.vocabulary.words-list', compact('words'));
     }
 
+    public function wordEdit($id){
+        $word = NaatiVocabularyWord::findorFail($id);
+        return view('admin.vocabulary.edit-word',compact('word'));
+        }
+
+    public function wordUpdate(Request $request ,$id){
+        $word = NaatiVocabularyWord::findOrFail($id);
+
+        // ✅ Validation with unique check per category
+        $request->validate([
+            'word' => [
+                'required',
+                'string',
+                Rule::unique('naati_vocabulary_words', 'word')
+                    ->where('category_id', $word->category_id) // check within same category
+                    ->ignore($id), // ignore current word
+            ],
+            'meaning' => 'required|string|max:255',
+        ]);
+
+        // ✅ Update the word
+        $word->update([
+            'word'    => $request->word,
+            'meaning' => $request->meaning,
+        ]);
+
+        return redirect()
+            ->route('admin.vocabulary.words-edit', $word->id)
+            ->with('success', 'Word updated successfully!');
+    }
+
+
 }
+
+
