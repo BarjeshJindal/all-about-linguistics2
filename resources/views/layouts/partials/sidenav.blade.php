@@ -122,6 +122,12 @@
                         <span class="menu-text"> Manage Practice Dialogue </span>
                     </a>
                 </li>
+                <li class="side-nav-item">
+                    <a href="{{ route('admin.select-practice-dialogue')}}" class="side-nav-link">
+                        <span class="menu-icon"><i class="ti ti-device-laptop"></i></span>
+                        <span class="menu-text"> Select Practice Dialogue</span>
+                    </a>
+                </li>
             
                 </ul>
             </li>

@@ -38,20 +38,34 @@
                                                 <th>Name</th>
                                                 <th>View</th>
                                                 <th>Tag</th>
-                                                <th>Score</th>
+                                                
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($dialogues as $dialogue)
-                                                <tr>
+                                            @foreach ($dialogues as $index => $dialogue)
+                                                @php
+                                                    $isLocked = !in_array($dialogue->id, $allowedDialogues);
+                                                @endphp
+
+                                                <tr class="{{ $isLocked ? 'blurred-row' : '' }}">
                                                     <td>{{ $dialogue->title }}</td>
                                                     <td class="click-view">
-                                                        <a href="{{ route('user.segments.index', $dialogue->id) }}">
-                                                            Click to view
-                                                        </a>
+                                                        @if (!$isLocked)
+                                                            <a href="{{ route('user.segments.index', $dialogue->id) }}">
+                                                                Click to view
+                                                            </a>
+                                                        @else
+                                                            <span class="locked-text">Locked</span>
+                                                        @endif
                                                     </td>
-                                                    <td><i class="ri-price-tag-3-fill"></i></td>
-                                                    <td>-</td>
+                                                    <td>
+                                                        @if ($isLocked)
+                                                            <i class="ri-lock-fill text-danger"></i>
+                                                        @else
+                                                            <i class="ri-price-tag-3-fill"></i>
+                                                        @endif
+                                                    </td>
+                                                    
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -117,6 +131,17 @@
 
         .card-body {
             padding: 7px;
+            }
+            .blurred-row {
+        filter: blur(2px);
+        pointer-events: none; /* disable clicks */
+        opacity: 0.6;
+        }
+
+        .locked-text {
+            color: #aaa;
+            font-weight: bold;
+            cursor: not-allowed;
         }
     </style>
 @endsection

@@ -398,7 +398,7 @@
                     cursorColor: '#ccc',
                     responsive: true,
                     hideScrollbar: true,
-                    // interact: false,
+                    interact: false,
                 });
 
                 wavesurfers[segmentId].load(

@@ -16,28 +16,46 @@ use App\Models\NaatiUserPracticeDialogueSegment;
 
 class UserSegmentController extends Controller
 {
-    public function index($practiceId)
-    {
-        // Get practice
-        $practice = DB::table('naati_practice_dialogues')
-            ->where('id', $practiceId)
-            ->first();
+   public function index($practiceId)
+{
+    $user = auth()->user();
 
-            // dd($practice);
-        // Get related segments manually (manual foreign key: dialogue_id)
-        $segments = DB::table('naati_practice_dialogues_segments')
-            ->where('dialogue_id', $practiceId)
-            ->get();
+    // Get practice
+    $practice = DB::table('naati_practice_dialogues')
+        ->where('id', $practiceId)
+        ->first();
 
-        // Get labels
-        $labels = DB::table('labels')->get();
-
-        return view('naati.users.segments.index', [
-            'practice' => $practice,
-            'segments' => $segments,
-            'labels'   => $labels
-        ]);
+    if (!$practice) {
+        return redirect()->back()->with('error', 'Dialogue not found.');
     }
+
+    // --- Get allowed dialogues for user's plan ---
+    $planId = $user->plan_id ?? 1; // fallback: free plan
+    $allowedDialogues = DB::table('naati_plan_dialogue')
+        ->where('plan_id', $planId)
+        ->pluck('dialogue_id')
+        ->toArray();
+
+    // --- Check access ---
+    if (!in_array($practiceId, $allowedDialogues)) {
+        return redirect()->back()
+            ->with('error', 'You need an active subscription to access this dialogue.');
+    }
+
+    // --- Get related segments ---
+    $segments = DB::table('naati_practice_dialogues_segments')
+        ->where('dialogue_id', $practiceId)
+        ->get();
+
+    // --- Get labels ---
+    $labels = DB::table('labels')->get();
+
+    return view('naati.users.segments.index', [
+        'practice' => $practice,
+        'segments' => $segments,
+        'labels'   => $labels
+    ]);
+}
 
 
     public function submitResponses(Request $request)

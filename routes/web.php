@@ -14,6 +14,7 @@ use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 // naati controllers
 use App\Http\Controllers\Naati\Admin\AdminMockTestController;
+use App\Http\Controllers\Admin\AdminSubcriptionPlanController;
 use App\Http\Controllers\Naati\MockTestController;
 use App\Http\Controllers\Naati\FeedbackController;
 use App\Http\Controllers\Naati\LanguageController;
@@ -102,7 +103,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
 
     // Route::get('/segment/create/{id}', [SegmentController::class, 'create'])->name('practices.create');
     // Route::post('/practices/store', [PracticeDialogueController::class, 'store'])->name('practices.store');
-
+    Route::get('/select/practice-dialogue', [AdminSubcriptionPlanController::class, 'selectPracticeDialogue'])
+            ->name('select-practice-dialogue');
+    Route::post('/select/practice-dialogue', [AdminSubcriptionPlanController::class, 'updateSelectedDialogues'])
+           ->name('update-selected-dialogue');
+         
+  
     // Vip Exam Material
 
 
@@ -279,9 +285,9 @@ Route::middleware(['auth:web'])->group(function () {
             return view('naati.users.videos');
         })->name('users.videos');
         Route::get('/faq',[UserFaqController::class,'showFaqs'])->name('users.faq');
-        // Route::get('/faq', function () {
+        // Route::get('/subscription', function () {
         //     return view('naati.users.faq');
-        // })->name('users.faq');
+        // })->name('users.subscriptions');
 
 
         Route::post('/user-mock-test-dialogues/submit', [UserMockTestDialogueController::class, 'submitResponses'])

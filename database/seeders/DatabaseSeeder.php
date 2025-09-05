@@ -12,6 +12,7 @@ use Database\Seeders\PracticeSeeder;
 use Database\Seeders\LanguageSeeder;
 use Database\Seeders\LabelSeeder;
 use Database\Seeders\RolePermissionSeeder;
+use Database\Seeders\NaatiSubscriptionPlanSeeder;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -35,7 +36,8 @@ class DatabaseSeeder extends Seeder
             SegmentType::class, 
             LanguageSeeder::class,
             LabelSeeder::class,
-            RolePermissionSeeder::class
+            RolePermissionSeeder::class,
+            NaatiSubscriptionPlanSeeder::class
             
         ]);
 

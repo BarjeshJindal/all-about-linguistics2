@@ -21,46 +21,47 @@ class UserController extends Controller
 {
 
     public function practiceDialogue()
-    {
+{
+    $user = auth()->user();
+    $labels = Label::all();
+    $languageId = $user->language_id;
 
-        $user = auth()->user();
-        $labels = Label::all();
+    // user plan
+    $planId = $user->plan_id ?? 1;
 
-        // Fetch current user's language_id
-        $languageId = $user->language_id;
+    // dialogues assigned by admin
+    $allowedDialogues = DB::table('naati_plan_dialogue')
+        ->where('plan_id', $planId)
+        ->pluck('dialogue_id')
+        ->toArray();
 
-        // Get dialogues for this language
-        $dialogues = NaatiPracticeDialogue::where('language_id', $languageId)
-            ->get();
+    // all dialogues in user's language
+    $dialoguesQuery = NaatiPracticeDialogue::where('language_id', $languageId);
 
-        //     $user_dialogues = NaatiUserPracticeDialogue::where('naati_user_practice_dialogues.user_id', $user->id)
-        // ->join('naati_practice_dialogues', 'naati_user_practice_dialogues.dialogue_id', '=', 'naati_practice_dialogues.id')
-        // ->select(
-        //     'naati_user_practice_dialogues.*',
-        //     'naati_practice_dialogues.title as dialogue_title'
-        // )
-        // ->get();
+    // separate allowed and locked
+    $unlocked = (clone $dialoguesQuery)->whereIn('id', $allowedDialogues)->get();
+    $locked   = (clone $dialoguesQuery)->whereNotIn('id', $allowedDialogues)->get();
 
+    // merge unlocked first, locked later
+    $dialogues = $unlocked->merge($locked);
 
+    // completed ones
+    $completedDialogues = NaatiUserPracticeDialogue::select(
+        'naati_user_practice_dialogues.*',
+        'naati_practice_dialogues.title'
+    )
+    ->join('naati_practice_dialogues', 'naati_practice_dialogues.id', '=', 'naati_user_practice_dialogues.dialogue_id')
+    ->where('naati_user_practice_dialogues.user_id', $user->id)
+    ->get();
 
-        // dd($user_dialogues->toArray());
+    return view('naati.users.practice-dialogues.index', [
+        'dialogues' => $dialogues,
+        'labels' => $labels,
+        'completedDialogues' => $completedDialogues,
+        'allowedDialogues' => $allowedDialogues,
+    ]);
+}
 
-        $userId=$user->id;
-        $completedDialogues = NaatiUserPracticeDialogue::select(
-            'naati_user_practice_dialogues.*',
-            'naati_practice_dialogues.title'
-        )
-        ->join('naati_practice_dialogues', 'naati_practice_dialogues.id', '=', 'naati_user_practice_dialogues.dialogue_id')
-        ->where('naati_user_practice_dialogues.user_id', $userId)
-        // ->whereNotNull('naati_user_mock_tests.score')
-        ->get();
-
-        return view('naati.users.practice-dialogues.index', [
-            'dialogues' => $dialogues,
-            'labels' => $labels,
-            'completedDialogues' => $completedDialogues,
-        ]);
-    }
     // public function resultsPracticeDialogue($userPracticeDialogueId)
     // {
     //     // 1) Get the user's practice dialogue attempt
