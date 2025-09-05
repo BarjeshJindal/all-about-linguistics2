@@ -398,7 +398,7 @@
                     cursorColor: '#ccc',
                     responsive: true,
                     hideScrollbar: true,
-                    interact: false,
+                    // interact: false,
                 });
 
                 wavesurfers[segmentId].load(
@@ -432,8 +432,8 @@
 
                 const startBtn = container.querySelector(".startRecording");
                 const stopBtn = container.querySelector(".stopRecording");
-                const playBtn = container.querySelector(".playRecording");
-                const playIcon = document.getElementById(`playIcon-${segmentId}`);
+                // const playBtn = container.querySelector(".playRecording");
+                // const playIcon = document.getElementById(`playIcon-${segmentId}`);
                 const canvas = container.querySelector("canvas");
                 const ctx = canvas.getContext("2d");
 
@@ -493,12 +493,12 @@
 
                     // reset state
                     recordedBlob = null;
-                    playBtn.disabled = true;
+                    // playBtn.disabled = true;
                 }
 
                 // reset state
                 recordedBlob = null;
-                playBtn.disabled = true;
+                // playBtn.disabled = true;
 
                 startBtn.disabled = true;
                 startBtn.innerText = 'Playing segment...';
@@ -537,38 +537,20 @@
                             recorder.ondataavailable = e => chunks.push(e.data);
 
                             recorder.onstop = () => {
-                                cancelAnimationFrame(animationId);
-                                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                    cancelAnimationFrame(animationId);
+                                    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                                recordedBlob = new Blob(chunks, { type: 'audio/webm' });
-                                const audioURL = URL.createObjectURL(recordedBlob);
+                                    // ✅ Create blob from chunks
+                                    recordedBlob = new Blob(chunks, { type: 'audio/webm' });
 
-                                if (micWaveform) micWaveform.destroy();
+                                    // ✅ Store blob for this segment
+                                    window.responses = window.responses || {};
+                                    window.responses[segmentId] = recordedBlob;
 
-                                micWaveform = WaveSurfer.create({
-                                    container: container.querySelector(`#user-waveform-${segmentId}`),
-                                    waveColor: '#a0d2eb',
-                                    progressColor: '#10c469',
-                                    height: 80,
-                                    barWidth: 1,
-                                    barGap: 2,
-                                    interact: false,
-                                });
-
-                                micWaveform.load(audioURL);
-                                micWaveform.on('ready', () => {
-                                    const duration = micWaveform.getDuration();
-                                    container.querySelector('.user-recorded-duration').innerText =
-                                        `${Math.round(duration)}s`;
-                                });
-
-                                // Store response
-                                window.responses = window.responses || {};
-                                window.responses[segmentId] = recordedBlob;
-
-                                playBtn.disabled = false;
-                                startBtn.innerText = 'Try Again';
-                            };
+                                    // ✅ Update button state
+                                    startBtn.innerText = 'Try Again';
+                                    startBtn.disabled = false;
+                                };
 
                             recorder.start();
                         } catch (err) {
@@ -595,13 +577,13 @@
                     if (prevBtn) prevBtn.disabled = false;
                 };
 
-                playBtn.onclick = () => {
-                    if (!micWaveform) return;
-                    micWaveform.playPause();
-                    const isPlaying = micWaveform.isPlaying();
-                    playIcon.classList.toggle('uil-play', !isPlaying);
-                    playIcon.classList.toggle('uil-pause', isPlaying);
-                };
+                // playBtn.onclick = () => {
+                //     if (!micWaveform) return;
+                //     micWaveform.playPause();
+                //     const isPlaying = micWaveform.isPlaying();
+                //     playIcon.classList.toggle('uil-play', !isPlaying);
+                //     playIcon.classList.toggle('uil-pause', isPlaying);
+                // };
                 });
             });
 

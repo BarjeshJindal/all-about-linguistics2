@@ -23,23 +23,23 @@
     <div class="segment-container" data-segment-id="{{ $segment->id }}"
         data-segment-audio-path="{{ $segment->segment_path }}">
         <canvas width="400" height="100"></canvas>
-        <div id="user-waveform-{{ $segment->id }}" class="user-recorded-waveform"></div>
+        {{-- <div id="user-waveform-{{ $segment->id }}" class="user-recorded-waveform"></div> --}}
 
-        <button id="playPauseBtn-{{ $segment->id }}"
+        {{-- <button id="playPauseBtn-{{ $segment->id }}"
             class="playRecording bg-white border border-primary text-primary p-1 rounded-full shadow hover:bg-primary hover:text-white transition disabled:opacity-50"
             disabled>
             <i class="uil uil-play" id="playIcon-{{ $segment->id }}"></i>
-        </button>
+        </button> --}}
 
-        <button type="button" onclick="takeNoteBtn()"
+        {{-- <button type="button" onclick="takeNoteBtn()"
             class="p-2 btn btn-light-success text-success btn-sm rounded-pill me-2 d-inline-flex align-items-center justify-content-center fa-pull-right"
             style="font-weight: bold;">
             <i class="ti ti-edit fs-5 me-2"></i>Take Your Notes
-        </button>
+        </button> --}}
 
-        <div>
+        {{-- <div>
             <span class="user-recorded-duration text-muted small"></span>
-        </div>
+        </div> --}}
 
         <div class="mt-2 d-flex segments-btn">
             <div class="start-stop-btn">
