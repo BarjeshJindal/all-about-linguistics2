@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DialogueController;
+use App\Http\Controllers\AdminUserController;
 
 use App\Http\Controllers\Auth\AdminLoginController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
@@ -189,6 +190,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::get('/download/sample-words', function () {
         return response()->download(public_path('downloadables/sample_words.xlsx'));
     })->name('download.sample-words');
+
+
+    Route::get('users', [AdminUserController::class, 'listUsers'])->name('users.list');
+    Route::get('users/{id}/edit', [AdminUserController::class, 'editUser'])->name('users.edit');
+    Route::post('users/{id}/assign-subscription', [AdminUserController::class, 'assignSubscription'])->name('users.assign-subscription');
+
 
     // manage subscription
     Route::get('/manage-subscription',[AdminSubcriptionPlanController::class,'manageSubcription'])->name('manage-subscriptions');

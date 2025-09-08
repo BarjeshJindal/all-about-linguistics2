@@ -78,16 +78,27 @@ class FortifyServiceProvider extends ServiceProvider
                     // User Login
                     $user = User::where('email', $request->email)->first();
                     if ($user && Hash::check($request->password, $user->password)) {
-                        return $user;
+
+                        $currentDate = \Carbon\Carbon::now()->toDateString();
+
+                        $activeSubscription = \App\Models\UserSubscription::where('user_id', $user->id)
+                            ->where('end_date', '>=', $currentDate)
+                            ->latest('end_date')
+                            ->first();
+
+                        if (!$activeSubscription) {
+                            if ($user->subscription_id != 1) {
+                                $user->subscription_id = 1;
+                                $user->save();
+                            }
+                        }
+
+                        return $user; 
                     }
                 }
        
                 return null;
             });
-
-
-            
-            
        
          
     }

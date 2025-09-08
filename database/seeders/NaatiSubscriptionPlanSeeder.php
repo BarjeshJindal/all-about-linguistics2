@@ -17,7 +17,6 @@ class NaatiSubscriptionPlanSeeder extends Seeder
         NaatiSubscriptionPlan::create([
             'plan_type' => 'free',
             // 'name' => 'Free Plan',
-            
             'practice_dialogues_limit' => 5,
             'mock_tests_limit' => 0,
             'vip_exams_limit' => 0,
@@ -29,7 +28,7 @@ class NaatiSubscriptionPlanSeeder extends Seeder
         NaatiSubscriptionPlan::create([
             'plan_type' => 'basic',
             'practice_dialogues_limit' => 20,
-            'mock_tests_limit' => 2,
+            'mock_tests_limit' => 3,
             'vip_exams_limit' => 0,
             'duration_days' => 30, // 1 month
         ]);
@@ -40,7 +39,7 @@ class NaatiSubscriptionPlanSeeder extends Seeder
             'practice_dialogues_limit' => 50,
             'mock_tests_limit' => 5,
             'vip_exams_limit' => 1,
-            'duration_days' => 90, // 3 months
+            'duration_days' => 60, 
         ]);
 
         // Advance Plan
@@ -49,7 +48,7 @@ class NaatiSubscriptionPlanSeeder extends Seeder
             'practice_dialogues_limit' => 100,
             'mock_tests_limit' => 10,
             'vip_exams_limit' => 3,
-            'duration_days' => 180, // 6 months
+            'duration_days' => 60, 
         ]);
 
     }

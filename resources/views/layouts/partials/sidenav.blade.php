@@ -98,7 +98,32 @@
 
                 </a>
             </li>
-             <li class="side-nav-item">
+            <li class="side-nav-item">
+                <a href="javascript:void(0);" class="side-nav-link" data-bs-toggle="collapse"
+                    data-bs-target="#ManageMenu">
+                    <span class="menu-icon"><i class="ti ti-home"></i></span>
+                    <span class="menu-text">Manage</span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <ul class="collapse side-nav-sub" id="ManageMenu">
+                    <li class="side-nav-item">
+                        <a href="{{ route('admin.users.list') }}" class="side-nav-link">
+                            <span class="menu-icon"><i class="ti ti-user-check"></i></span>
+                            <span class="menu-text"> User Subscriptions </span>
+                        </a>
+                    </li>
+                    
+                    <li class="side-nav-item">
+                        <a href="{{ route('admin.manage-subscriptions')}}" class="side-nav-link">
+                            <span class="menu-icon"><i class="ti ti-device-laptop"></i></span>
+                            <span class="menu-text">Subscription Plans</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </li>
+
+            <li class="side-nav-item">
                 <a href="javascript:void(0);" class="side-nav-link" data-bs-toggle="collapse"
                     data-bs-target="#practiceDialogueMenu">
                     <span class="menu-icon"><i class="ti ti-help-circle"></i></span>
@@ -108,25 +133,27 @@
                 <ul class="collapse side-nav-sub" id="practiceDialogueMenu">
                     <li class="side-nav-item">
 
-                
-                    <a href="{{ route('admin.practices.create') }}" class="side-nav-link">
-                        <span class="menu-icon"><i class="ti ti-book"></i></span>
-                        <span class="menu-text"> Add Practice Dialogue </span>
-                    </a>
-                </li>
-                 <li class="side-nav-item">
 
-                
-                    <a href="{{ route('admin.practices.manage') }}" class="side-nav-link">
-                        <span class="menu-icon"><i class="ti ti-book"></i></span>
-                        <span class="menu-text"> Manage Practice Dialogue </span>
-                    </a>
-                </li>
-                
-            
+                        <a href="{{ route('admin.practices.create') }}" class="side-nav-link">
+                            <span class="menu-icon"><i class="ti ti-book"></i></span>
+                            <span class="menu-text"> Add Practice Dialogue </span>
+                        </a>
+                    </li>
+                    <li class="side-nav-item">
+
+
+                        <a href="{{ route('admin.practices.manage') }}" class="side-nav-link">
+                            <span class="menu-icon"><i class="ti ti-book"></i></span>
+                            <span class="menu-text"> Manage Practice Dialogue </span>
+                        </a>
+                    </li>
+
+
+
+
                 </ul>
             </li>
-                
+
             <li class="side-nav-item">
 
 
@@ -153,13 +180,13 @@
                 </a>
 
                 <ul class="collapse side-nav-sub" id="faqsMenu">
-                     <li class="side-nav-item">
+                    <li class="side-nav-item">
                         <a href="{{ route('admin.faqs.add') }}" class="side-nav-link">
-                             <span class="menu-icon"><i class="ti ti-circle-plus"></i></span>
+                            <span class="menu-icon"><i class="ti ti-circle-plus"></i></span>
                             <span class="menu-text"> Add Faqs </span>
                         </a>
                     </li>
-                     <li class="side-nav-item">
+                    <li class="side-nav-item">
                         <a href="{{ route('admin.faqs.list') }}" class="side-nav-link">
                             <span class="menu-icon"><i class="ti ti-edit"></i></span>
                             <span class="menu-text"> Manage Faqs </span>
@@ -167,18 +194,7 @@
                     </li>
                 </ul>
             </li>
-           {{-- <li class="side-nav-item">
-                    <a href="{{ route('admin.select-practice-dialogue')}}" class="side-nav-link">
-                        <span class="menu-icon"><i class="ti ti-device-laptop"></i></span>
-                        <span class="menu-text"> Select Practice Dialogue</span>
-                    </a>
-            </li> --}}
-            <li class="side-nav-item">
-                    <a href="{{ route('admin.manage-subscriptions')}}" class="side-nav-link">
-                        <span class="menu-icon"><i class="ti ti-device-laptop"></i></span>
-                        <span class="menu-text">Manage Subscription</span>
-                    </a>
-            </li>
+
 
             <li class="side-nav-item">
                 <a href="javascript:void(0);" class="side-nav-link" data-bs-toggle="collapse"
@@ -199,14 +215,14 @@
                         <a href="{{ route('admin.mock-tests.reviews.index') }}">
                             <span class="menu-icon"><i class="ti ti-edit"></i></span>
                             <span class="menu-text">Review Mock Tests</span>
-                        
+
                         </a>
                     </li>
                     <li class="side-nav-item">
                         <a href="{{ route('admin.mock-tests.manage') }}">
                             <span class="menu-icon"><i class="ti ti-edit"></i></span>
                             <span class="menu-text">Manage Mock Tests</span>
-                        
+
                         </a>
                     </li>
                 </ul>
@@ -233,8 +249,8 @@
                     <span class="menu-text"> Types of Plans</span>
                 </a>
             </li> --}}
-           
-             <li class="side-nav-item">
+
+            <li class="side-nav-item">
                 <a href="javascript:void(0);" class="side-nav-link" data-bs-toggle="collapse"
                     data-bs-target="#vipexamMenu">
                     <span class="menu-icon"><i class="ti ti-pencil"></i></span>
@@ -244,13 +260,13 @@
 
                 <ul class="collapse side-nav-sub" id="vipexamMenu">
                     <li class="side-nav-item">
-                        <a href="{{ route('admin.vip-exams.create')}}" class="side-nav-link">
+                        <a href="{{ route('admin.vip-exams.create') }}" class="side-nav-link">
                             <span class="menu-icon"><i class="ti ti-devices-question"></i></span>
                             <span class="menu-text"> Add VIP Exam Material</span>
                         </a>
                     </li>
                     <li class="side-nav-item">
-                        <a href="{{ route('admin.vip-exams.manage')}}" class="side-nav-link">
+                        <a href="{{ route('admin.vip-exams.manage') }}" class="side-nav-link">
                             <span class="menu-icon"><i class="ti ti-devices-question"></i></span>
                             <span class="menu-text"> Manage VIP Exam Material</span>
                         </a>
@@ -258,8 +274,8 @@
                 </ul>
             </li>
 
-            
-            
+
+
 
             <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#vocabularyMenu" aria-expanded="false"
@@ -269,24 +285,24 @@
                     <span class="menu-arrow"></span>
                 </a>
 
-                        <div class="collapse" id="vocabularyMenu">
-                            <ul class="side-nav-second-level">
-                                <li class="side-nav-item">
-                                    <a href="{{ route('admin.vocabulary.words') }}">
-                                        <span class="menu-icon"><i class="ti ti-file-plus"></i></span>
-                                        <span class="menu-text">Add Words</span>
-                                    </a>
-                                </li>
-                                <li class="side-nav-item">
-                                    <a href="{{ route('admin.vocabulary.category') }}">
-                                        <span class="menu-icon"><i class="ti ti-library-plus"></i></span>
-                                        <span class="menu-text">View Words</span>
-                        
-                                    </a>
-                                </li>
-                                
-                            </ul>
-                        </div>
+                <div class="collapse" id="vocabularyMenu">
+                    <ul class="side-nav-second-level">
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.vocabulary.words') }}">
+                                <span class="menu-icon"><i class="ti ti-file-plus"></i></span>
+                                <span class="menu-text">Add Words</span>
+                            </a>
+                        </li>
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.vocabulary.category') }}">
+                                <span class="menu-icon"><i class="ti ti-library-plus"></i></span>
+                                <span class="menu-text">View Words</span>
+
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
             </li>
 
 
@@ -329,13 +345,15 @@
 <!-- Sidenav Menu End -->
 <style>
     li.side-nav-item {
-    list-style: none;
-    padding: 8px;
-}
-li.active {
-    list-style: none;
-    padding: 8px;
-}
+        list-style: none;
+        padding: 8px;
+    }
+
+    li.active {
+        list-style: none;
+        padding: 8px;
+    }
+
     span.logo-lg.sidebar-logo img {
         width: 130px;
         height: 130px;
