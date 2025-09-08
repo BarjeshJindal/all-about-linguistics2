@@ -49,6 +49,6 @@ class UserDashboardController extends Controller
             $total_words_opened = NaatiVocabularyUserOpenedWord::where('user_id',$user->id)->count(); 
             // $practicecount =NaatiPracticeDialogue::select('id')->count();
            
-       return view('users.index',compact('categories','completedMockTest','practicedialogueCount','vipexamCount','mocktestCount','completedPracticeDialogue','completedvipexam','total_words','total_words_opened'));
+       return view('users.dashboard',compact('categories','completedMockTest','practicedialogueCount','vipexamCount','mocktestCount','completedPracticeDialogue','completedvipexam','total_words','total_words_opened'));
     }
 }
