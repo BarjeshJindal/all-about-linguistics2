@@ -31,46 +31,69 @@
                 </ul>
                 <div class="tab-content">
                     {{-- Practice Tab --}}
+                    
                     <div class="tab-pane show active" id="home-b2">
                         <div class="row">
                             <div class="col-12">
                                 <div class="card">
                                     <div class="card-body">
 
-                                        @if ($mockTests->count())
-                                            <table id="datatable-buttons"
-                                                class="table table-bordered table-striped dt-responsive nowrap w-100 text-center">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        <th>View</th>
-                                                        <th>Tag</th>
-                                                        <th>Score</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($mockTests as $mockTest)
-                                                        <tr>
-                                                            <td>{{ $mockTest->title }}</td>
-                                                            <td class="click-view">
-                                                                <a href="{{ route('user.MockTest.view', $mockTest->id) }}">
-                                                                    Click to view
-                                                                </a>
-                                                            </td>
-                                                            <td><i class="ri-price-tag-3-fill"></i></td>
-                                                            <td>-</td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        @else
-                                            <p class="text-center">No practice dialogue uploaded yet</p>
-                                        @endif
-                                    </div> <!-- end card body-->
-                                </div> <!-- end card -->
-                            </div><!-- end col-->
-                        </div> <!-- end row-->
+                                       @if ($mockTests->count())
+    <h5 class="mb-2">Mock Tests</h5>
+    <table class="table table-bordered table-striped dt-responsive nowrap w-100 text-center">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>View</th>
+                <th>Tag</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($mockTests as $mockTest)
+                @php
+                    $isLocked = !in_array($mockTest->id, $allowedDialogues ?? []);
+                @endphp
+                <tr class="{{ $isLocked ? 'blurred-row' : '' }}">
+                    <td>{{ $mockTest->title }}</td>
+                    <td class="click-view">
+                        @if (!$isLocked)
+                            <a href="{{ route('user.MockTest.view', $mockTest->id) }}">
+                                Click to view
+                            </a>
+                        @else
+                            <span class="locked-text">Locked</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if ($isLocked)
+                            <i class="ri-lock-fill text-danger"></i>
+                        @else
+                            <i class="ri-price-tag-3-fill second"></i>
+                        @endif
+                    </td>
+                    <td>
+                        @if (!$isLocked)
+                            {{ $mockTest->score ?? '-' }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+@else
+    <p class="text-center">No Mock Tests available yet</p>
+@endif
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
                 {{-- awaiting reviews --}}
                 <div class="tab-content">
@@ -181,6 +204,17 @@
 
         i.ri-price-tag-3-fill.fourth {
             color: green;
+        }
+        .blurred-row td {
+            filter: blur(3px);
+            opacity: 0.6;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .locked-text {
+            color: #ff5b5b;
+            font-weight: bold;
         }
     </style>
 @endsection

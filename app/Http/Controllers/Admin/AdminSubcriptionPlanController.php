@@ -48,7 +48,7 @@ class AdminSubcriptionPlanController extends Controller
         ));
     }
 
-    public function updateSelectedDialogues(Request $request, $planId = '1')
+    public function updateSelectedDialogues(Request $request, $planId)
     {
         $plan = DB::table('naati_subscription_plans')->where('id', $planId)->first();
         if (!$plan) {

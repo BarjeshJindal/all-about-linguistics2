@@ -27,7 +27,7 @@ class UserController extends Controller
     $languageId = $user->language_id;
 
     // user plan
-    $planId = $user->plan_id ?? 1;
+    $planId = $user->subscription_id ?? 1;
 
     // dialogues assigned by admin
     $allowedDialogues = DB::table('naati_plan_dialogue')

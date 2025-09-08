@@ -30,7 +30,7 @@ class UserSegmentController extends Controller
     }
 
     // --- Get allowed dialogues for user's plan ---
-    $planId = $user->plan_id ?? 1; // fallback: free plan
+    $planId = $user->subscription_id ?? 1; // fallback: free plan
     $allowedDialogues = DB::table('naati_plan_dialogue')
         ->where('plan_id', $planId)
         ->pluck('dialogue_id')

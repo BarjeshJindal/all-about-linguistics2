@@ -106,7 +106,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     // Route::post('/practices/store', [PracticeDialogueController::class, 'store'])->name('practices.store');
     Route::get('/select/dialogues/{id}', [AdminSubcriptionPlanController::class, 'selectPracticeDialogue'])
             ->name('select-practice-dialogue');
-    Route::post('/select/practice-dialogue', [AdminSubcriptionPlanController::class, 'updateSelectedDialogues'])
+    Route::post('/select/practice-dialogue/{id}', [AdminSubcriptionPlanController::class, 'updateSelectedDialogues'])
            ->name('update-selected-dialogue');
          
   

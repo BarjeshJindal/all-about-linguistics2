@@ -15,34 +15,48 @@ use Illuminate\Support\Facades\DB;
 class UserVipExamController extends Controller
 {
     public function vipExam()
-    {
+{
+    $user = auth()->user();
+    $labels = Label::all();
 
-        $user = auth()->user();
-        $labels = Label::all();
+    $languageId = $user->language_id;
 
-        // Fetch current user's language_id
-        $languageId = $user->language_id;
+    // user plan
+    $planId = $user->subscription_id ?? 1;
 
-        // Get dialogues for this language
-        $dialogues = NaatiVipExam::where('language_id', $languageId)
-            ->get();
-        $userId=$user->id;
-        $completedDialogues = NaatiUserVipExam::select(
-            'naati_user_vip_exams.*',
-            'naati_vip_exams.title'
-        )
+    // dialogues assigned by admin for this plan
+    $allowedDialogues = DB::table('naati_plan_dialogue')
+        ->where('plan_id', $planId)
+        ->pluck('dialogue_id')
+        ->toArray();
+
+    // all Vip Exam dialogues for user's language
+    $dialoguesQuery = NaatiVipExam::where('language_id', $languageId);
+
+    // separate unlocked and locked
+    $unlocked = (clone $dialoguesQuery)->whereIn('id', $allowedDialogues)->get();
+    $locked   = (clone $dialoguesQuery)->whereNotIn('id', $allowedDialogues)->get();
+
+    // merge unlocked first, locked later
+    $dialogues = $unlocked->merge($locked);
+
+    // completed ones
+    $completedDialogues = NaatiUserVipExam::select(
+        'naati_user_vip_exams.*',
+        'naati_vip_exams.title'
+    )
         ->join('naati_vip_exams', 'naati_vip_exams.id', '=', 'naati_user_vip_exams.dialogue_id')
-        ->where('naati_user_vip_exams.user_id', $userId)
-        // ->whereNotNull('naati_user_mock_tests.score')
-        ->get();    
+        ->where('naati_user_vip_exams.user_id', $user->id)
+        ->get();
 
-        
-        return view('naati.users.vip-exams.index', [
-            'dialogues' => $dialogues,
-            'labels' => $labels,
-            'completedDialogues' => $completedDialogues,
-        ]);
-    }
+    return view('naati.users.vip-exams.index', [
+        'dialogues' => $dialogues,
+        'labels' => $labels,
+        'completedDialogues' => $completedDialogues,
+        'allowedDialogues' => $allowedDialogues,
+    ]);
+}
+
     
     
 
@@ -105,14 +119,33 @@ class UserVipExamController extends Controller
 
 
     
-    public function vipexamSegment($dialogue)
-    {
+    public function vipexamSegment($dialogueId)
+    {    
+        $user = auth()->user();
         // Get practice
         $dialogue = DB::table('naati_vip_exams')
-            ->where('id', $dialogue)
-            ->first();
+                ->where('id', $dialogueId)
+                ->first();
+
           
-            // dd($practice);
+        if (!$dialogue) {
+        return redirect()->back()->with('error', 'Dialogue not found.');
+        }
+
+        $planId = $user->subscription_id ?? 1; // fallback: free plan
+        $allowedDialogues = DB::table('naati_plan_dialogue')
+            ->where('plan_id', $planId)
+            ->where('type_id', 2) // type 2 = VIP exam
+            ->pluck('dialogue_id')
+            ->toArray();
+
+        // --- Check access ---
+        if (!in_array($dialogueId, $allowedDialogues)) {
+            return redirect()->back()
+                ->with('error', 'You need an active subscription to access this dialogue.');
+        }
+
+
         // Get related segments manually (manual foreign key: dialogue_id)
         $segments = DB::table('naati_vip_exam_segments')
             ->where('dialogue_id', $dialogue->id)

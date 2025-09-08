@@ -18,49 +18,82 @@ class MockTestController extends Controller
     
     public function showMockTestsList()
     {
-        $userId = Auth::id();
+        $user = auth()->user();
+        $userId = $user->id;
 
         // Get the user's preferred second language
-        $secondLanguage = User::whereId($userId)->value('language_id');
+        $secondLanguage = $user->language_id;
 
-        // Get all mock tests that match the user's second language
+        // User plan
+        $planId = $user->subscription_id ?? 1;
+
+        // Dialogues assigned by admin for this plan
+        $allowedDialogues = DB::table('naati_plan_dialogue')
+            ->where('plan_id', $planId)
+            ->pluck('dialogue_id')
+            ->toArray();
+
+        // All Mock Tests for user's language
         $mockTests = NaatiMockTest::where('language_id', $secondLanguage)->get();
 
+        // Separate unlocked and locked
+        $unlocked = $mockTests->whereIn('id', $allowedDialogues);
+        $locked   = $mockTests->whereNotIn('id', $allowedDialogues);
 
+        // Awaiting feedback
         $awaitingFeedback = NaatiUserMockTest::select(
             'naati_user_mock_tests.*',
             'naati_mock_tests.title'
         )
-        ->join('naati_mock_tests', 'naati_mock_tests.id', '=', 'naati_user_mock_tests.mock_test_id')
-        ->where('naati_user_mock_tests.user_id', $userId)
-        ->whereNull('naati_user_mock_tests.score')
-        ->get();
+            ->join('naati_mock_tests', 'naati_mock_tests.id', '=', 'naati_user_mock_tests.mock_test_id')
+            ->where('naati_user_mock_tests.user_id', $userId)
+            ->whereNull('naati_user_mock_tests.score')
+            ->get();
 
-
+        // Completed feedback
         $completedFeedback = NaatiUserMockTest::select(
             'naati_user_mock_tests.*',
             'naati_mock_tests.title'
         )
-        ->join('naati_mock_tests', 'naati_mock_tests.id', '=', 'naati_user_mock_tests.mock_test_id')
-        ->where('naati_user_mock_tests.user_id', $userId)
-        ->whereNotNull('naati_user_mock_tests.score')
-        ->get();
-
-
+            ->join('naati_mock_tests', 'naati_mock_tests.id', '=', 'naati_user_mock_tests.mock_test_id')
+            ->where('naati_user_mock_tests.user_id', $userId)
+            ->whereNotNull('naati_user_mock_tests.score')
+            ->get();
 
         return view('naati.users.mock-tests.showAllMockTests', compact(
             'mockTests',
+            'unlocked',
+            'locked',
             'awaitingFeedback',
-            'completedFeedback'
+            'completedFeedback',
+            'allowedDialogues'
         ));
     }
 
 
+
     public function viewMockTest($mockTestId)
-    {
+    {   
+        $user = auth()->user();
         // Fetch the mock test
         $practice = DB::table('naati_mock_tests')->where('id', $mockTestId)->first();
+          
+        if (!$practice) {
+        return redirect()->back()->with('error', 'Dialogue not found.');
+        }
+        $planId = $user->subscription_id ?? 1;
+        $allowedDialogues = DB::table('naati_plan_dialogue')
+            ->where('plan_id', $planId)
+            ->where('type_id', 3) // type 3 = Mock Test
+            ->pluck('dialogue_id')
+            ->toArray();
 
+          // --- Check access ---
+        if (!in_array($mockTestId, $allowedDialogues)) {
+            return redirect()->back()
+                ->with('error', 'You need an active subscription to access this Mock Test.');
+        }
+    
         // Fetch dialogues related to the mock test
         $dialogues = DB::select("
             SELECT d.id, d.title, d.description
