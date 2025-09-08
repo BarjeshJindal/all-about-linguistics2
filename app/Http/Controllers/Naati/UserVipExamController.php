@@ -27,6 +27,7 @@ class UserVipExamController extends Controller
     // dialogues assigned by admin for this plan
     $allowedDialogues = DB::table('naati_plan_dialogue')
         ->where('plan_id', $planId)
+        ->where('type_id', 2)
         ->pluck('dialogue_id')
         ->toArray();
 
