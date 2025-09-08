@@ -103,7 +103,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
 
     // Route::get('/segment/create/{id}', [SegmentController::class, 'create'])->name('practices.create');
     // Route::post('/practices/store', [PracticeDialogueController::class, 'store'])->name('practices.store');
-    Route::get('/select/practice-dialogue', [AdminSubcriptionPlanController::class, 'selectPracticeDialogue'])
+    Route::get('/select/dialogues/{id}', [AdminSubcriptionPlanController::class, 'selectPracticeDialogue'])
             ->name('select-practice-dialogue');
     Route::post('/select/practice-dialogue', [AdminSubcriptionPlanController::class, 'updateSelectedDialogues'])
            ->name('update-selected-dialogue');
@@ -189,6 +189,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::get('/download/sample-words', function () {
         return response()->download(public_path('downloadables/sample_words.xlsx'));
     })->name('download.sample-words');
+
+    // manage subscription
+    Route::get('/manage-subscription',[AdminSubcriptionPlanController::class,'manageSubcription'])->name('manage-subscriptions');
 
 });
 // Route::middleware('auth:admin')->group(function () {

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('plan_id');
             $table->unsignedBigInteger('dialogue_id');
+            $table->unsignedBigInteger('language_id');
+            $table->unsignedBigInteger('type_id');
             $table->timestamps();
             
         });
