@@ -38,7 +38,7 @@
                                             <th>Name</th>
                                             <th>View</th>
                                             <th>Tag</th>
-                                            <th>Score</th>
+                                            
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -64,7 +64,7 @@
                                                         <i class="ri-price-tag-3-fill"></i>
                                                     @endif
                                                 </td>
-                                                <td>{{ $dialogue->score ?? '-' }}</td>
+                                               
                                             </tr>
                                         @endforeach
                                         </tbody>
@@ -84,7 +84,7 @@
                                             <th>DateTime</th>
                                             <th>View</th>
                                             <th>Status</th>
-                                            <th>Score</th>
+                                            
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -98,7 +98,7 @@
                                                     </a>
                                                 </td>
                                                 <td><span class="badge bg-success">Completed</span></td>
-                                                <td>{{ $dialogue->score ?? 'N/A' }}</td>
+                                               
                                             </tr>
                                         @endforeach
                                         </tbody>

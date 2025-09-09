@@ -86,7 +86,7 @@
                                                 <th>DateTime</th>
                                                 <th>View</th>
                                                 <th>Status</th>
-                                                <th>Score</th>
+                                               
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -101,7 +101,7 @@
                                                         </a>
                                                     </td>
                                                     <td><span class="badge bg-success">Completed</span></td>
-                                                    <td>{{ $dialogue->score ?? 'N/A' }}</td>
+                                                   
                                                 </tr>
                                             @endforeach
                                         </tbody>

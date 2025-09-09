@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'Dashboard', 'topbarTitle' => 'Dashboard'])
+@extends('layouts.vertical', ['title' => 'Ticket', 'topbarTitle' => 'Ticket'])
 
 @section('content')
     <div class="card p-4">

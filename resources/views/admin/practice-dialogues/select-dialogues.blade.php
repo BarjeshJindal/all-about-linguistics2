@@ -45,7 +45,7 @@
                                 </td>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $practiceDialogue->title }}</td>
-                                <td>{{ $practiceDialogue->created_at }}</td>
+                                <td>{{ $practiceDialogue->created_at->format('d-m-Y H:i') }}</td>
                             </tr>
                         @empty
                             <tr><td colspan="4">No practice dialogues available</td></tr>
@@ -86,7 +86,7 @@
                                 </td>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $vipDialogue->title }}</td>
-                                <td>{{ $vipDialogue->created_at }}</td>
+                                <td>{{ $vipDialogue->created_at->format('d-m-Y H:i') }}</td>
                             </tr>
                         @empty
                             <tr><td colspan="4">No VIP dialogues available</td></tr>
@@ -127,7 +127,7 @@
                                 </td>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $mockTest->title }}</td>
-                                <td>{{ $mockTest->created_at }}</td>
+                                <td>{{ $mockTest->created_at->format('d-m-Y H:i') }}</td>
                             </tr>
                         @empty
                             <tr><td colspan="4">No mock tests available</td></tr>
