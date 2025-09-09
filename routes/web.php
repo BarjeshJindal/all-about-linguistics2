@@ -16,6 +16,7 @@ use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 // naati controllers
 use App\Http\Controllers\Naati\Admin\AdminMockTestController;
 use App\Http\Controllers\Admin\AdminSubcriptionPlanController;
+use App\Http\Controllers\Admin\AdminTicketController;
 use App\Http\Controllers\Naati\MockTestController;
 use App\Http\Controllers\Naati\FeedbackController;
 use App\Http\Controllers\Naati\LanguageController;
@@ -37,6 +38,7 @@ use App\Http\Controllers\Naati\CategoryController;
 use App\Http\Controllers\Naati\UserDashboardController;
 use App\Http\Controllers\Naati\FaqController;
 use App\Http\Controllers\Naati\UserFaqController;
+use App\Http\Controllers\Naati\SupportTicketController;
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
@@ -200,6 +202,14 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     // manage subscription
     Route::get('/manage-subscription',[AdminSubcriptionPlanController::class,'manageSubcription'])->name('manage-subscriptions');
 
+    
+    // support ticket routes 
+    Route::get('/tickets', [AdminTicketController::class, 'index'])->name('ticket.list');
+    Route::get('/tickets/{ticketId}', [AdminTicketController::class, 'view'])->name('ticket.view');
+    Route::post('/tickets/{ticketId}/reply', [AdminTicketController::class, 'reply'])->name('ticket.reply');
+    Route::post('/tickets/{ticketId}/close', [AdminTicketController::class, 'close'])->name('ticket.close');
+    Route::post('/admin/tickets/{id}/reopen', [AdminTicketController::class, 'reopen'])->name('ticket.reopen');
+
 });
 // Route::middleware('auth:admin')->group(function () {
 //     Route::get('/admin/dashboard',[AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -302,6 +312,14 @@ Route::middleware(['auth:web'])->group(function () {
 
         Route::post('/user-mock-test-dialogues/submit', [UserMockTestDialogueController::class, 'submitResponses'])
         ->name('user.mocktest.submit');
+
+        // user ticket routes
+        Route::get('/create-ticket',[SupportTicketController::class,'showCreateForm'])->name('user.create-ticket');
+        Route::post('/create-ticket',[SupportTicketController::class,'create'])->name('user.ticket.create');
+        Route::get('/tickets', [SupportTicketController::class, 'list'])->name('user.tickets.list');
+        Route::get('/tickets/{ticketId}', [SupportTicketController::class, 'details'])->name('ticket.details');
+        Route::post('/tickets/{ticketId}/message', [SupportTicketController::class, 'sendMessage'])->name('ticket.message.send');
+        Route::post('/tickets/{id}/reopen', [SupportTicketController::class, 'reopen'])->name('ticket.reopen');
 
     });
 });

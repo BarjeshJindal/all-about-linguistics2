@@ -170,6 +170,30 @@
                     <span class="menu-text">Subsription Plans</span>
                 </a>
             </li>
+            <li class="side-nav-item">
+                <a href="javascript:void(0);" class="side-nav-link" data-bs-toggle="collapse"
+                    data-bs-target="#helpDeskMenu" aria-expanded="false" aria-controls="helpDeskMenu">
+                    <span class="menu-icon"><i class="ti ti-help-circle"></i></span>
+                    <span class="menu-text">Help Desk</span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="collapse side-nav-sub" id="helpDeskMenu">
+                    <li class="side-nav-item">
+                        <a href="{{ route('user.create-ticket') }}" class="side-nav-link">
+                            <span class="menu-icon"><i class="ti ti-circle-plus"></i></span>
+                            <span class="menu-text">Create Ticket</span>
+                        </a>
+                    </li>
+                    <li class="side-nav-item">
+                        <a href="{{ route('user.tickets.list') }}" class="side-nav-link">
+                            <span class="menu-icon"><i class="ti ti-edit"></i></span>
+                            <span class="menu-text">Ticket History</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
         </ul>
 
         <div class="clearfix"></div>
