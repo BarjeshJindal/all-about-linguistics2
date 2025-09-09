@@ -13,8 +13,7 @@ class LanguageSeeder extends Seeder
      */
     public function run(): void
     {
-        $languages=[
-            'Hindi'];
+        $languages=['Hindi','Punjabi','Tamil'];
          foreach ($languages as $data) {
            Language::create(['second_language'=>$data]);
         }
