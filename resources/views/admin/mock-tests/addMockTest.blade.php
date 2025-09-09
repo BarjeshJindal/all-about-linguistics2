@@ -164,15 +164,15 @@
                     }
 
                     // ✅ Max 6 segments
-                    if (segmentCount >= 6) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Limit Reached',
-                            text: 'You can only add up to 6 segments.',
-                            confirmButtonText: 'OK'
-                        });                
-                        return;
-                    }
+                    // if (segmentCount >= 6) {
+                    //     Swal.fire({
+                    //         icon: 'warning',
+                    //         title: 'Limit Reached',
+                    //         text: 'You can only add up to 6 segments.',
+                    //         confirmButtonText: 'OK'
+                    //     });                
+                    //     return;
+                    // }
 
                    const html = `<div class="segment-block border p-3 mb-3 rounded bg-white">
                             <h4 class="segment-title mb-3">Segment ${newIndex}</h4>   

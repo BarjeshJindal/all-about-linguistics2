@@ -117,17 +117,17 @@
             const wrapper = document.getElementById('segment-wrapper');
             const languageSelect = document.getElementById('language');
 
-            // ✅ Max 6 segments
-            const currentSegments = wrapper.querySelectorAll('.segment-block').length;
-            if (currentSegments >= 6) {
-                Swal.fire({
-                icon: 'warning',
-                title: 'Limit Reached',
-                text: 'You can only add up to 6 segments.',
-                confirmButtonText: 'OK'
-                });                
-                return;
-            }
+            // // ✅ Max 6 segments
+            // const currentSegments = wrapper.querySelectorAll('.segment-block').length;
+            // if (currentSegments >= 6) {
+            //     Swal.fire({
+            //     icon: 'warning',
+            //     title: 'Limit Reached',
+            //     text: 'You can only add up to 6 segments.',
+            //     confirmButtonText: 'OK'
+            //     });                
+            //     return;
+            // }
 
             let selectedLanguage = "Second Language";
             if (languageSelect.selectedIndex > 0) {
