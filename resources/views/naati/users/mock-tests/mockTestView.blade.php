@@ -160,6 +160,33 @@
 
             buttons.forEach(button => {
                 button.addEventListener('click', function() {
+
+                    // 🚨 Force stop everything each time the button is clicked
+                    document.querySelectorAll('audio').forEach(a => {
+                        try { a.pause(); a.currentTime = 0; } catch (e) {}
+                    });
+
+                    for (let id in wavesurfers) {
+                        try { wavesurfers[id].stop(); } catch (e) {}
+                    }
+
+                    if (window.currentRecorder && window.currentRecorder.state !== "inactive") {
+                        try { window.currentRecorder.stop(); } catch (e) {}
+                    }
+
+                    if (window.currentMicStream) {
+                        try { window.currentMicStream.getTracks().forEach(t => t.stop()); } catch (e) {}
+                    }
+
+                     // 🚨 NEW: Stop any manually created Audio objects (like your beep sound)
+                    if (window.activeAudioPlayers) {
+                        window.activeAudioPlayers.forEach(player => {
+                            try { player.pause(); player.currentTime = 0; } catch (e) {}
+                        });
+                        window.activeAudioPlayers = [];
+                    }
+
+                    // ✅ now switch dialogues
                     const currentId = this.getAttribute('data-current');
                     const nextId = this.getAttribute('data-next');
 
@@ -513,8 +540,11 @@
                     stopBtn.disabled = true; // Prevent stop during beep
 
                     // Play beep sound (5-second beep)
-                    const beepSound = new Audio('/sounds/beep_2sec.mp3'); // Replace with your path
+                    const beepSound = new Audio('/sounds/beep_2sec.mp3'); // Replace with your path if needed
+                    window.activeAudioPlayers = window.activeAudioPlayers || [];
+                    window.activeAudioPlayers.push(beepSound);
                     beepSound.play();
+
 
                     beepSound.onended = async () => {
                         // ✅ Now start actual recording
@@ -532,6 +562,9 @@
                             drawLiveWave(analyser);
 
                             recorder = new MediaRecorder(micStream);
+                            window.currentRecorder = recorder;
+                            window.currentMicStream = micStream;
+
                             const chunks = [];
 
                             recorder.ondataavailable = e => chunks.push(e.data);
