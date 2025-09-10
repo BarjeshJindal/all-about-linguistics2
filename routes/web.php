@@ -205,11 +205,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
 
     
     // support ticket routes 
-    Route::get('/tickets', [AdminTicketController::class, 'index'])->name('ticket.list');
-    Route::get('/tickets/{ticketId}', [AdminTicketController::class, 'view'])->name('ticket.view');
-    Route::post('/tickets/{ticketId}/reply', [AdminTicketController::class, 'reply'])->name('ticket.reply');
-    Route::post('/tickets/{ticketId}/close', [AdminTicketController::class, 'close'])->name('ticket.close');
-    Route::post('/admin/tickets/{id}/reopen', [AdminTicketController::class, 'reopen'])->name('ticket.reopen');
+    // Route::get('/tickets', [AdminTicketController::class, 'index'])->name('ticket.list');
+    // Route::get('/tickets/{ticketId}', [AdminTicketController::class, 'view'])->name('ticket.view');
+    // Route::post('/tickets/{ticketId}/reply', [AdminTicketController::class, 'reply'])->name('ticket.reply');
+    // Route::post('/tickets/{ticketId}/close', [AdminTicketController::class, 'close'])->name('ticket.close');
+    // Route::post('/admin/tickets/{id}/reopen', [AdminTicketController::class, 'reopen'])->name('ticket.reopen');
 
 });
 // Route::middleware('auth:admin')->group(function () {
@@ -319,12 +319,12 @@ Route::middleware(['auth:web'])->group(function () {
         ->name('user.mocktest.submit');
 
         // user ticket routes
-        Route::get('/create-ticket',[SupportTicketController::class,'showCreateForm'])->name('user.create-ticket');
-        Route::post('/create-ticket',[SupportTicketController::class,'create'])->name('user.ticket.create');
-        Route::get('/tickets', [SupportTicketController::class, 'list'])->name('user.tickets.list');
-        Route::get('/tickets/{ticketId}', [SupportTicketController::class, 'details'])->name('ticket.details');
-        Route::post('/tickets/{ticketId}/message', [SupportTicketController::class, 'sendMessage'])->name('ticket.message.send');
-        Route::post('/tickets/{id}/reopen', [SupportTicketController::class, 'reopen'])->name('ticket.reopen');
+        // Route::get('/create-ticket',[SupportTicketController::class,'showCreateForm'])->name('user.create-ticket');
+        // Route::post('/create-ticket',[SupportTicketController::class,'create'])->name('user.ticket.create');
+        // Route::get('/tickets', [SupportTicketController::class, 'list'])->name('user.tickets.list');
+        // Route::get('/tickets/{ticketId}', [SupportTicketController::class, 'details'])->name('ticket.details');
+        // Route::post('/tickets/{ticketId}/message', [SupportTicketController::class, 'sendMessage'])->name('ticket.message.send');
+        // Route::post('/tickets/{id}/reopen', [SupportTicketController::class, 'reopen'])->name('ticket.reopen');
 
     });
 });

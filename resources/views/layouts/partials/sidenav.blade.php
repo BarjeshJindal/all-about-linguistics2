@@ -229,14 +229,14 @@
             </li>
 
             
-            <li class="side-nav-item">
+            {{-- <li class="side-nav-item">
 
 
                 <a href="{{ route('admin.ticket.list') }}" class="side-nav-link">
                     <span class="menu-icon"><i class="ti ti-language"></i></span>
                     <span class="menu-text"> Tickets </span>
                 </a>
-            </li>
+            </li> --}}
             {{-- <li class="side-nav-item">
                 <a href="{{ route('admin.mock-testssss.index') }}" class="side-nav-link">
                     <span class="menu-icon"><i class="ti ti-message-circle"></i></span>
@@ -316,12 +316,12 @@
 
 
 
-            <li class="side-nav-item">
+            {{-- <li class="side-nav-item">
                 <a href="#" class="side-nav-link">
                     <span class="menu-icon"><i class="ti ti-device-laptop"></i></span>
                     <span class="menu-text"> NAATI CCL Online Classes</span>
                 </a>
-            </li>
+            </li> --}}
             {{-- @can('show-role') 
              <li class="side-nav-item">
                 <a href="{{ route('admin.roles.index')}}" class="side-nav-link">

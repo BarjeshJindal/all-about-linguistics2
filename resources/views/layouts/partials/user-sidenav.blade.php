@@ -123,12 +123,12 @@
                 </a>
             </li>
 
-            <li class="side-nav-item">
+            {{-- <li class="side-nav-item">
                 <a href="#" class="side-nav-link">
                     <span class="menu-icon"><i class="ti ti-device-laptop"></i></span>
                     <span class="menu-text"> NAATI CCL Online Classes</span>
                 </a>
-            </li>
+            </li> --}}
 
             {{-- <li class="side-nav-item">
                 <a href="{{ route('users.videos') }}" class="side-nav-link">
@@ -151,26 +151,26 @@
                 </a>
             </li>
 
-            <li class="side-nav-item">
+            {{-- <li class="side-nav-item">
                 <a href="#" class="side-nav-link">
                     <span class="menu-icon"><i class="ti ti-messages"></i></span>
                     <span class="menu-text">Forum</span>
                 </a>
-            </li>
+            </li> --}}
 
-            <li class="side-nav-item">
+            {{-- <li class="side-nav-item">
                 <a href="#" class="side-nav-link">
                     <span class="menu-icon"><i class="ti ti-file-text"></i></span>
                     <span class="menu-text">Book NAATI CCL Exam</span>
                 </a>
-            </li>
+            </li> --}}
              <li class="side-nav-item">
                 <a href="{{route('users.subscription')}}" class="side-nav-link">
                     <span class="menu-icon"><i class="ti ti-file-text"></i></span>
                     <span class="menu-text">Subsription Plans</span>
                 </a>
             </li>
-            <li class="side-nav-item">
+            {{-- <li class="side-nav-item">
                 <a href="javascript:void(0);" class="side-nav-link" data-bs-toggle="collapse"
                     data-bs-target="#helpDeskMenu" aria-expanded="false" aria-controls="helpDeskMenu">
                     <span class="menu-icon"><i class="ti ti-help-circle"></i></span>
@@ -192,7 +192,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
 
         </ul>
 

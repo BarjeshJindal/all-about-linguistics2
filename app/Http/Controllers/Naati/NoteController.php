@@ -12,13 +12,31 @@ class NoteController extends Controller
     {
         $request->validate([
             'dialogue_id' => 'required|integer',
-            'type_id' => 'required|integer',
-            'note' => 'nullable|string',
+            'type_id'     => 'required|integer',
+            'note'        => 'nullable|string',
         ]);
 
+        $userId = auth()->id();
+
+        if (empty($request->note)) {
+            // Delete the note if it exists
+            NaatiNote::where([
+                'user_id'     => $userId,
+                'dialogue_id' => $request->dialogue_id,
+                'type_id'     => $request->type_id,
+            ])->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Empty Note',
+                'note'    => null,
+            ]);
+        }
+
+        // Otherwise, save or update the note
         $note = NaatiNote::updateOrCreate(
             [
-                'user_id'     => auth()->id(),
+                'user_id'     => $userId,
                 'dialogue_id' => $request->dialogue_id,
                 'type_id'     => $request->type_id,
             ],
