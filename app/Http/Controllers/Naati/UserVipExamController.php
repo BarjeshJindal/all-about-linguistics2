@@ -11,6 +11,7 @@ use App\Models\Notes;
 use Illuminate\Support\Facades\Auth;
 use App\Models\NaatiUserVipExamSegment;
 use Illuminate\Support\Facades\DB;
+use App\Models\NaatiNote;
 
 class UserVipExamController extends Controller
 {
@@ -154,12 +155,19 @@ class UserVipExamController extends Controller
         //   dd($segments->); 
  
         // Get labels
-        $labels = DB::table('labels')->get();
+        $note =NaatiNote::where('user_id',$user->id)
+                ->where('type_id',2)
+                ->where('dialogue_id',$dialogueId)
+                ->first();
+              
+              
+        
 
         return view('naati.users.vip-exams.user-vipexam-segments', [
             'dialogue' => $dialogue,
             'segments' => $segments,
-            'labels'   => $labels
+            // 'labels'   => $labels,
+            'note'=>$note
         ]);
     }
 

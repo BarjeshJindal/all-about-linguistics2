@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\NaatiPracticeDialogue;
 use App\Models\NaatiUserPracticeDialogue;
 use App\Models\NaatiUserPracticeDialogueSegment;
-
+use App\Models\NaatiNote;
 class UserSegmentController extends Controller
 {
    public function index($practiceId)
@@ -48,12 +48,15 @@ class UserSegmentController extends Controller
         ->get();
 
     // --- Get labels ---
-    $labels = DB::table('labels')->get();
+     $note =NaatiNote::where('user_id',$user->id)
+                ->where('type_id',1)
+                ->where('dialogue_id',$practiceId)
+                ->first();
 
     return view('naati.users.segments.index', [
         'practice' => $practice,
         'segments' => $segments,
-        'labels'   => $labels
+        'note'=>$note
     ]);
 }
 
@@ -120,39 +123,7 @@ class UserSegmentController extends Controller
 
 
 
-    public function note(Request $request, $practiceId)
-    {
-        $note = DB::table('notes')
-            ->updateOrInsert(
-                [
-                    'user_id' => auth()->id(),
-                    'practice_id' => $practiceId,
-                ],
-                [
-                    'note'       => $request['note'],
-                    'updated_at' => now(),
-                    'created_at' => now(),
-                ]
-            );
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Note saved successfully.',
-        ]);
-    }
-
-    public function getNote($practiceId)
-    {
-        $note = DB::table('notes')
-            ->where('user_id', auth()->id())
-            ->where('practice_id', $practiceId)
-            ->value('note');
-
-        return response()->json([
-            'success' => true,
-            'note' => $note
-        ]);
-    }
+   
 
     public function updateLabel(Request $request, $practiceId)
     {

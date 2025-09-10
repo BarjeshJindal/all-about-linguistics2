@@ -39,6 +39,7 @@ use App\Http\Controllers\Naati\UserDashboardController;
 use App\Http\Controllers\Naati\FaqController;
 use App\Http\Controllers\Naati\UserFaqController;
 use App\Http\Controllers\Naati\SupportTicketController;
+use App\Http\Controllers\Naati\NoteController;
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
@@ -308,6 +309,10 @@ Route::middleware(['auth:web'])->group(function () {
         // Route::get('/subscription', function () {
         //     return view('naati.users.faq');
         // })->name('users.subscriptions');
+       
+        // notes route
+        Route::post('/naati-notes/store', [NoteController::class, 'store'])->name('notes.store');
+        Route::get('/notes/{dialogue}/{type}', [NoteController::class, 'show'])->name('notes.show');
 
 
         Route::post('/user-mock-test-dialogues/submit', [UserMockTestDialogueController::class, 'submitResponses'])
