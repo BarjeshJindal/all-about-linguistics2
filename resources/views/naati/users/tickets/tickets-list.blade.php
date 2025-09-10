@@ -5,12 +5,12 @@
         <div class="row justify-content-center">  
             <div class="container m-0 py-4 fund-request-form">
                 <div class="row">
-                    <h2 class="form-title">Open Tickets</h2>
+                    <h2 class="open-ticket-title">Open Tickets</h2>
 
                     <div class="table-responsive">
                         <table id="data_table"
                                class="table table-bordered table-striped table-hover align-middle text-nowrap">
-                            <thead class="table-head" style="background-color: #ebe716; color: white;">
+                            <thead class="table-head">
                                 <tr>
                                     <th scope="col">Sr. No</th>
                                     <th>Ticket Title</th>
@@ -33,7 +33,7 @@
                                             <td>{{ $ticket->created_at->format('d-m-Y') }}</td>
                                             <td>
                                                 <a href="{{ route('ticket.details', $ticket->id) }}"
-                                                   class="btn btn-success btn-sm">
+                                                   class="btn ticket-view-btn btn-sm">
                                                     Reply
                                                 </a>
                                             </td>

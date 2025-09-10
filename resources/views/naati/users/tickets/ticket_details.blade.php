@@ -3,8 +3,6 @@
 @section('content')
     <div class="card p-4">
         <div class="row justify-content-center">
-            <div class="container my-5 fund-request-form">
-
                 <div class="chat-box">
                     {{-- ✅ Success Message --}}
                     @if (session('success'))
@@ -29,7 +27,7 @@
                         </div>
                     </div>
 
-                    <h5 class="mb-4">Chat Messages</h5>
+                    <h5 class="mb-4 chat-title">Chat Messages</h5>
 
                     @foreach ($ticket->messages as $msg)
                         <div class="message {{ $msg->sender_type }}">
@@ -60,8 +58,6 @@
                         </form>
                     @endif
                 </div>
-
-            </div>
         </div>
     </div>
 @endsection

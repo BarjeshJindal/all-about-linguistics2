@@ -29,7 +29,7 @@
                     </div>
                 </div>
 
-                <h5 class="mb-4">Chat Messages</h5>
+                <h5 class="mb-4 chat-title">Chat Messages</h5>
 
                 @foreach ($ticket->messages as $msg)
                     <div class="message {{ $msg->sender_type == 'user' ? 'admin' : 'user' }}">
@@ -78,9 +78,10 @@
                     </form>
                 @endif
 
-            </div>
         </div>
     </div>
+
+
 @endsection
 
 @section('scripts')

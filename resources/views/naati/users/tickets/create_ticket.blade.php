@@ -3,8 +3,8 @@
 @section('content')
     <div class="card p-4">
         <div class="row justify-content-center">
-            <div class="container my-5 fund-request-form">
-                <h2 class="form-title mb-3">Create a New Ticket</h2>
+            <div class="container create-ticket-box my-5 fund-request-form">
+                <h3 class="creagte-ticket-title mb-3">Create a New Ticket</h3>
 
                 {{-- ✅ Success Message --}}
                 @if (session('success'))
@@ -29,7 +29,7 @@
                                   placeholder="Write your message here..."></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-success">Submit Ticket</button>
+                    <button type="submit" class="btn submit-ticket">Submit Ticket</button>
                 </form>
             </div>
         </div>

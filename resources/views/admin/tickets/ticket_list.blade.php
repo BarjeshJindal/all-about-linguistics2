@@ -5,12 +5,12 @@
         <div class="row justify-content-center">
             <div class="row">
 
-                <h2 class="form-title">All Support Tickets</h2>
+                <h2 class="all-support-title">All Support Tickets</h2>
 
                 <div class="table-responsive">
                     <table id="data_table"
                            class="table table-bordered table-striped table-hover align-middle text-nowrap">
-                        <thead class="table-head" style="background-color: #dc3545; color: white;">
+                        <thead class="table-head" >
                             <tr>
                                 <th>Sr.</th>
                                 <th>Name</th>
@@ -37,7 +37,7 @@
                                         <td>{{ $ticket->created_at->format('d-m-Y H:i') }}</td>
                                         <td>
                                             <a href="{{ route('admin.ticket.view', $ticket->id) }}"
-                                               class="btn btn-primary ticket-view-btn btn-sm">
+                                               class="btn ticket-view-btn btn-sm">
                                                 View
                                             </a>
                                         </td>
