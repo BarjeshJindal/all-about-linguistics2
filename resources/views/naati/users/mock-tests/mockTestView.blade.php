@@ -19,7 +19,8 @@
                 <span id="countdown" class="badge bg-danger fs-6 py-2 px-3">00:00</span>
             </div>
             <div>
-                <span id="segmentProgress">1 / {{ count($dialogues[0]->segments) }}</span>
+                {{-- <span id="segmentProgress">1 / {{ count($dialogues[0]->segments) }}</span> --}}
+                <span id="segmentProgress"></span>
             </div>
         </div>
 
@@ -62,7 +63,7 @@
     <div class="row">
         @foreach ($dialogues as $dIndex => $dialogue)
             <div class="dialogue-container row" id="dialogue-{{ $dialogue->id }}"
-                style="{{ $dIndex !== 0 ? 'display:none;' : '' }}">
+                style="{{ $dIndex !== 0 ? 'display:none;' : '' }}" data-total-segments="{{ count($dialogue->segments) }}">
                 <!-- Left Side: Camera & Segment Player -->
                 <div class="col-lg-9 bg-camera">
                     <div class="diloce-title">
@@ -95,10 +96,15 @@
 
                     <!-- Complete Dialogue Button -->
                     <div class="mt-4 text-end">
-                        <button class="btn btn-success complete-dialogue" data-current="{{ $dialogue->id }}"
-                            data-next="{{ $dialogues[$dIndex + 1]->id ?? '' }}" {{ $loop->last ? 'disabled' : '' }}>
-                            ✅ Complete Dialogue
-                        </button>
+                        @if ($dIndex !== 1)   {{-- hides for 2nd dialogue (index starts at 0) --}}
+                            <button class="btn btn-success complete-dialogue"
+                                data-current="{{ $dialogue->id }}"
+                                data-next="{{ $dialogues[$dIndex + 1]->id ?? '' }}"
+                                disabled>
+                                ✅ Complete Dialogue
+                            </button>
+                        @endif
+
                     </div>
                     <hr>
                 </div>
@@ -109,7 +115,7 @@
                         <ul class="nav flex-column nav-tabs" id="segmentTab-{{ $dialogue->id }}" role="tablist">
                             @foreach ($dialogue->segments as $segment)
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link text-start {{ $loop->first ? 'active' : '' }} "
+                                    <a class="nav-link text-start {{ $loop->first ? 'active' : '' }} disabled "
                                         id="segment-tab-{{ $segment->id }}" data-bs-toggle="tab"
                                         href="#segment-{{ $segment->id }}" role="tab">
                                         <i class="ti ti-microphone me-2" style="color: rgb(193, 150, 23);"></i>
@@ -583,6 +589,13 @@
                                     // ✅ Update button state
                                     startBtn.innerText = 'Try Again';
                                     startBtn.disabled = false;
+
+                                    // ✅ enable complete-dialogue button for this dialogue
+                                    const dialogueContainer = container.closest('.dialogue-container');
+                                    if (dialogueContainer) {
+                                        const completeBtn = dialogueContainer.querySelector('.complete-dialogue');
+                                        if (completeBtn) completeBtn.disabled = false;
+                                    }
                                 };
 
                             recorder.start();
@@ -666,16 +679,41 @@
 
 
         document.addEventListener("DOMContentLoaded", () => {
-            const progressEl = document.getElementById("segmentProgress");
-            const allSegments = document.querySelectorAll('.tab-pane');
-            let currentIndex = 1; // start at 1
+    const progressEl = document.getElementById("segmentProgress");
 
-            function updateProgress(newIndex) {
-                progressEl.textContent = `${newIndex} / ${allSegments.length}`;
-            }
+    function getActiveDialogue() {
+        return document.querySelector('.dialogue-container:not([style*="display: none"])');
+    }
 
-            // Initially set progress
-            updateProgress(currentIndex);
+    function updateProgress() {
+        const activeDialogue = getActiveDialogue();
+        if (!activeDialogue) return;
+
+        const tabs = activeDialogue.querySelectorAll('[data-bs-toggle="tab"]');
+        const activeTab = activeDialogue.querySelector('[data-bs-toggle="tab"].active');
+
+        const currentIndex = Array.from(tabs).indexOf(activeTab) + 1; // +1 because index starts at 0
+        const total = tabs.length;
+
+        progressEl.textContent = `${currentIndex} / ${total}`;
+    }
+
+    // Update whenever a tab is switched
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', updateProgress);
+    });
+
+    // Update whenever a dialogue is switched with ✅ Complete Dialogue button
+    document.querySelectorAll('.complete-dialogue').forEach(btn => {
+        btn.addEventListener('click', () => {
+            setTimeout(updateProgress, 100); // slight delay to wait for new dialogue to show
+        });
+    });
+
+    // Initialize on page load
+    updateProgress();
+
+
              // ✅ NEXT button → move + auto start
              document.querySelectorAll('.next-tab, .prev-tab').forEach(btn => {
                 btn.disabled = true;

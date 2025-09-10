@@ -24,7 +24,7 @@
             <span class="segment-index">{{ $segments->first()->id ?? '' }}</span>
             <span><span class="segment-index">{{ $segments->first()->id ?? '' }}</span>/{{ count($segments) }}</span>
 
-            <div class="dropdown">
+            {{-- <div class="dropdown">
                 <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="ti ti-tag me-2 text-{{ $userLabel->color ?? 'secondary' }}"></i>
@@ -43,7 +43,7 @@
                     @endforeach
                 </ul>
 
-            </div>
+            </div> --}}
         </div>
 
         <!-- Modal -->
