@@ -237,7 +237,7 @@
                 <ul class="nav flex-column nav-tabs" id="segmentTab" role="tablist">
                     @foreach ($segments as $segment)
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link text-start {{ $loop->first ? 'active' : '' }}"
+                            <a class="nav-link text-start {{ $loop->first ? 'active' : '' }} disabled"
                                 id="segment-tab-{{ $segment->id }}" data-bs-toggle="tab"
                                 data-segment-index="{{ $loop->iteration }}" href="#segment-{{ $segment->id }}"
                                 role="tab">

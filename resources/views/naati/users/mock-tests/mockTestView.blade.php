@@ -109,7 +109,7 @@
                         <ul class="nav flex-column nav-tabs" id="segmentTab-{{ $dialogue->id }}" role="tablist">
                             @foreach ($dialogue->segments as $segment)
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link text-start {{ $loop->first ? 'active' : '' }}"
+                                    <a class="nav-link text-start {{ $loop->first ? 'active' : '' }} "
                                         id="segment-tab-{{ $segment->id }}" data-bs-toggle="tab"
                                         href="#segment-{{ $segment->id }}" role="tab">
                                         <i class="ti ti-microphone me-2" style="color: rgb(193, 150, 23);"></i>
