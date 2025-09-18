@@ -35,8 +35,10 @@
                 @foreach($practiceSegments as $loopIndex => $practiceSegment)
            
                     <div class="segment-block mb-4 mt-4 border p-6 rounded-2xl bg-light">
+                        <div class="removebtn d-flex justify-content-between">
                         <h4 class="segment-title p-2">Segment {{ $loop->iteration }}</h4>
-                        <button type="button" class="btn btn-danger btn-sm remove-segment float-end">✖ Remove</button>
+                        <button type="button" class="btn btn-danger remove-segment float-end">✖</button>
+                         </div>
 
                         <input type="hidden" name="segments[{{ $loopIndex }}][id]" value="{{ $practiceSegment->id }}">
 
@@ -134,9 +136,10 @@
         newBlock.classList.add('segment-block', 'mb-4', 'mt-4', 'border', 'p-6', 'rounded-2xl', 'bg-light');
 
         newBlock.innerHTML = `
+        <div class="removebtn d-flex justify-content-between">
             <h4 class="segment-title p-2">Segment ${segmentIndex + 1}</h4>
-            <button type="button" class="btn btn-danger btn-sm remove-segment float-end">✖ Remove</button>
-
+            <button type="button" class="btn btn-danger remove-segment float-end">✖</button>
+        </div>
             <div class="mb-3 p-2">
                 <label class="form-label">Audio File (MP3)</label>
                 <input type="file" name="segments[${segmentIndex}][segment_path]" class="form-control" accept=".mp3,.wav" required >

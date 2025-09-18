@@ -56,8 +56,10 @@
             <div id="dialogue-one-segments">
                 @foreach($segments->where('dialogue_id', $mocktest->dialogue_one_id) as $loopIndex => $segment)
                     <div class="segment-block mb-4 mt-4 border p-6 rounded-2xl bg-light">
+                        <div class="removebtn d-flex justify-content-between">
                         <h5 class="segment-title p-2">Segment {{ $loop->iteration }}</h5>
-                        <button type="button" class="btn btn-danger mt-2 remove-segment-btn" data-id="{{ $segment->id }}">❌ Remove</button>
+                        <button type="button" class="btn btn-danger remove-segment-btn" data-id="{{ $segment->id }}">✖</button>
+</div>
                         <input type="hidden" name="segments[{{ $loopIndex }}][id]" value="{{ $segment->id }}">
                         <input type="hidden" name="segments[{{ $loopIndex }}][dialogue_id]" value="{{ $mocktest->dialogue_one_id }}">
 
@@ -116,8 +118,10 @@
             <div id="dialogue-two-segments">
                 @foreach($segments->where('dialogue_id', $mocktest->dialogue_two_id) as $loopIndex => $segment)
                     <div class="segment-block mb-4 mt-4 border p-6 rounded-2xl bg-light">
+                        <div class="removebtn d-flex justify-content-between">
                         <h5 class="segment-title p-2">Segment {{ $loop->iteration }}</h5>
-                        <button type="button" class="btn btn-danger mt-2 remove-segment-btn" data-id="{{ $segment->id }}">❌ Remove</button>
+                        <button type="button" class="btn btn-danger remove-segment-btn" data-id="{{ $segment->id }}">✖</button>
+                            </div>
                         <input type="hidden" name="segments[{{ $loopIndex }}][id]" value="{{ $segment->id }}">
                         <input type="hidden" name="segments[{{ $loopIndex }}][dialogue_id]" value="{{ $mocktest->dialogue_two_id }}">
 
@@ -217,8 +221,10 @@ function addSegment(containerId, dialogueId) {
     const block = document.createElement('div');
     block.classList.add('segment-block','mb-4','mt-4','border','p-6','rounded-2xl','bg-light');
     block.innerHTML = `
+    <div class="removebtn d-flex justify-content-between">
         <h5 class="segment-title p-2">Segment ${currentCount}</h5>
-        <button type="button" class="btn btn-danger mt-2 remove-segment-btn">❌ Remove</button>
+        <button type="button" class="btn btn-danger remove-segment-btn">✖</button>
+        </div>
         <input type="hidden" name="segments[${newIndex}][dialogue_id]" value="${dialogueId}" required>
 
         <div class="mb-1 p-2">
