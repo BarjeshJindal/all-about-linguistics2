@@ -152,7 +152,7 @@ public function store(Request $request)
    
 
 
-    public function practiceDialogueUpdate(Request $request, $id)
+public function practiceDialogueUpdate(Request $request, $id)
 {
     $dialogue = NaatiPracticeDialogue::findOrFail($id);
 
@@ -162,18 +162,36 @@ public function store(Request $request)
         'description' => $request->description,
     ]);
 
-    // ✅ Handle segments
+    // ✅ Collect submitted IDs (for update/new)
+    $submittedIds = collect($request->segments)
+        ->pluck('id')
+        ->filter() // remove null/empty
+        ->toArray();
+
+    // ✅ Delete removed segments (not in submitted IDs)
+    NaatiPracticeDialoguesSegment::where('dialogue_id', $dialogue->id)
+        ->whereNotIn('id', $submittedIds)
+        ->get()
+        ->each(function ($segment) {
+            // delete files too
+            if ($segment->segment_path && Storage::disk('public')->exists($segment->segment_path)) {
+                Storage::disk('public')->delete($segment->segment_path);
+            }
+            if ($segment->sample_response && Storage::disk('public')->exists($segment->sample_response)) {
+                Storage::disk('public')->delete($segment->sample_response);
+            }
+            $segment->delete();
+        });
+
+    // ✅ Handle update & create
     if ($request->has('segments')) {
         foreach ($request->segments as $index => $segmentData) {
 
-            // If `id` exists → update, otherwise → create
             $segment = !empty($segmentData['id'])
                 ? NaatiPracticeDialoguesSegment::find($segmentData['id'])
                 : new NaatiPracticeDialoguesSegment(['dialogue_id' => $dialogue->id]);
 
-            if (!$segment) {
-                continue; // skip invalid
-            }
+            if (!$segment) continue;
 
             // Handle audio file (segment_path)
             if (isset($segmentData['segment_path']) && $segmentData['segment_path'] instanceof \Illuminate\Http\UploadedFile) {
@@ -203,6 +221,7 @@ public function store(Request $request)
         ->back()
         ->with('success', 'Dialogue updated successfully!');
 }
+
 
 
 

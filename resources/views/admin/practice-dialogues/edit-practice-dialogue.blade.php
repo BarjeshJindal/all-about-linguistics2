@@ -36,7 +36,8 @@
            
                     <div class="segment-block mb-4 mt-4 border p-6 rounded-2xl bg-light">
                         <h4 class="segment-title p-2">Segment {{ $loop->iteration }}</h4>
-
+                            <!-- Remove button -->
+                        <button type="button" class="btn btn-danger btn-sm remove-segment float-end">✖ Remove</button>
                         <input type="hidden" name="segments[{{ $loopIndex }}][id]" value="{{ $practiceSegment->id }}">
 
                         <div class="mb-1 p-2">
@@ -123,36 +124,65 @@
             wavesurfers[id].playPause();
         });
     });
+    // Renumber segment titles
+    function renumberSegments() {
+        document.querySelectorAll('.segment-block').forEach((block, index) => {
+            block.querySelector('.segment-title').textContent = `Segment ${index + 1}`;
+        });
+    }
 
+    // Remove segment handler
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-segment')) {
+            const wrapper = document.getElementById('segment-wrapper');
+            const blocks = wrapper.querySelectorAll('.segment-block');
+
+            if (blocks.length > 1) {
+                e.target.closest('.segment-block').remove();
+                renumberSegments();
+            } else {
+                alert("At least one segment is required.");
+            }
+        }
+    });
+   
     // ✅ Add Segment Function
     document.getElementById('add-segment').addEventListener('click', function() {
         const wrapper = document.getElementById('segment-wrapper');
 
         const newBlock = document.createElement('div');
         newBlock.classList.add('segment-block', 'mb-4', 'mt-4', 'border', 'p-6', 'rounded-2xl', 'bg-light');
+
         newBlock.innerHTML = `
             <h4 class="segment-title p-2">Segment ${segmentIndex + 1}</h4>
+            <button type="button" class="btn btn-danger btn-sm remove-segment float-end">✖ Remove</button>
+
             <div class="mb-3 p-2">
                 <label class="form-label">Audio File (MP3)</label>
-                <input type="file" name="segments[${segmentIndex}][segment_path]" class="form-control" accept=".mp3,.wav" >
+                <input type="file" name="segments[${segmentIndex}][segment_path]" class="form-control" accept=".mp3,.wav">
             </div>
+
             <div class="mb-1 p-2">
                 <label class="form-label">Sample Response (MP3)</label>
                 <input type="file" name="segments[${segmentIndex}][sample_response]" class="form-control" accept=".mp3,.wav">
             </div>
+
             <div class="row p-2">
                 <div class="mb-3 p-2 col-sm-6">
                     <label class="form-label">Answer (English)</label>
                     <input type="text" name="segments[${segmentIndex}][answer_eng]" class="form-control" required>
                 </div>
                 <div class="mb-3 p-2 col-sm-6">
-                    <label class="form-label answer-languages-label">Answer Second Language</label>
+                    <label class="form-label">Answer Second Language</label>
                     <input type="text" name="segments[${segmentIndex}][answer_second_language]" class="form-control" required>
                 </div>
             </div>
         `;
+
         wrapper.appendChild(newBlock);
         segmentIndex++;
+        renumberSegments(); // ✅ keep numbering consistent
     });
+
 </script>
 @endsection

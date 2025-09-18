@@ -100,7 +100,7 @@ class VipExamController extends Controller
         return view('admin.vip-exams.edit-vip-exam',compact('practiceDialogue','practiceSegments'));
     }
 
-    public function vipexamUpdate(Request $request, $id)
+   public function vipexamUpdate(Request $request, $id)
 {
     $dialogue = NaatiVipExam::findOrFail($id);
 
@@ -110,20 +110,24 @@ class VipExamController extends Controller
         'description' => $request->description,
     ]);
 
-    // ✅ Handle segments
+    // ✅ Delete removed segments
+    if ($request->filled('delete_segments')) {
+        $deleteIds = explode(',', $request->delete_segments);
+        NaatiVipExamSegment::whereIn('id', $deleteIds)->delete();
+    }
+
+    // ✅ Handle segments (update or create)
     if ($request->has('segments')) {
         foreach ($request->segments as $index => $segmentData) {
-
-            // If `id` exists → update, otherwise → create
             $segment = !empty($segmentData['id'])
                 ? NaatiVipExamSegment::find($segmentData['id'])
                 : new NaatiVipExamSegment(['dialogue_id' => $dialogue->id]);
 
             if (!$segment) {
-                continue; // skip invalid
+                continue;
             }
 
-            // Handle audio file (segment_path)
+            // Handle audio file
             if (isset($segmentData['segment_path']) && $segmentData['segment_path'] instanceof \Illuminate\Http\UploadedFile) {
                 if ($segment->segment_path && Storage::disk('public')->exists($segment->segment_path)) {
                     Storage::disk('public')->delete($segment->segment_path);
@@ -139,7 +143,7 @@ class VipExamController extends Controller
                 $segment->sample_response = $segmentData['sample_response']->store('naati-audios/sample-responses', 'public');
             }
 
-            // ✅ Update texts
+            // Update texts
             $segment->answer_eng            = $segmentData['answer_eng'] ?? $segment->answer_eng;
             $segment->answer_other_language = $segmentData['answer_second_language'] ?? $segment->answer_other_language;
 
@@ -147,9 +151,8 @@ class VipExamController extends Controller
         }
     }
 
-    return redirect()
-        ->back()
-        ->with('success', 'Vip Exam updated successfully!');
+    return redirect()->back()->with('success', 'Vip Exam updated successfully!');
 }
+
 
 }
