@@ -13,6 +13,12 @@ use App\Models\NaatiPracticeDialoguesSegment;
 use Illuminate\Http\UploadedFile;
 use App\Models\NaatiCategory;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;   
+// use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Validator;
+// use Illuminate\Http\UploadedFile;
+// use App\Models\NaatiPracticeDialogue;
+// use App\Models\NaatiPracticeDialoguesSegment;
 
 class PracticeDialogueController extends Controller
 {
@@ -38,64 +44,83 @@ class PracticeDialogueController extends Controller
     // }
 
 
-    public function create()
-    {
-        $languages=Language::get();
-        $categories = NaatiCategory::get();
+  public function create()
+{
+    $languages = Language::get();
+    $categories = NaatiCategory::get();
 
-        return view('admin.practice-dialogues.create',['languages'=>$languages,'categories'=>$categories]);
+    return view('admin.practice-dialogues.create', [
+        'languages' => $languages,
+        'categories' => $categories
+    ]);
+}
+
+public function store(Request $request)
+{
+    // 🔑 Reindex the segments to 0..N before validation
+    $request->merge([
+        'segments' => array_values($request->input('segments', []))
+    ]);
+    // dd($request->all());
+
+    $rules = [
+        'title' => 'required|string|max:255',
+        'description' => 'required|string',
+        'language_id' => 'required|integer|exists:languages,id',
+        'category_id' => 'required|integer',
+        'segments' => 'required|array|min:1',
+        'segments.*.segment_path' => 'required|file|mimes:mp3,wav|max:20480',
+        'segments.*.sample_response' => 'required|file|mimes:mp3,wav|max:20480',
+        'segments.*.answer_eng' => 'required|string',
+        'segments.*.answer_second_language' => 'required|string',
+    ];
+
+    $messages = [
+        'category_id.required' => 'Please Select Category',
+        'language_id.required' => 'Please Select Language',
+    ];
+
+    // ✅ Now indexes are safe (0,1,2...)
+    foreach ($request->segments ?? [] as $i => $s) {
+        $n = $i + 1;
+        $messages["segments.$i.segment_path.required"] = "Segment $n: Audio File is required.";
+        $messages["segments.$i.sample_response.required"] = "Segment $n: Please Select Sample Response.";
+        $messages["segments.$i.answer_eng.required"] = "Segment $n: English Answer is required.";
+        $messages["segments.$i.answer_second_language.required"] = "Segment $n: Second Language Answer is required.";
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'language_id' => 'required|integer',
-            'category_id' => 'required|integer',
-            'segments' => 'required|array',
-            'segments.*.segment_path' => 'required|file|mimes:mp3,wav|max:20480',
-            'segments.*.sample_response' => 'required|file|mimes:mp3,wav|max:20480',            
-            'segments.*.answer_eng' => 'required|string',
-            'segments.*.answer_second_language' => 'required|string',
-            ],['category_id.required'=>'Please Select Category',
-            'language_id.required'=>'Please Select Language',
-            'category_id.integer' => 'Please Select Category',
-            'segments.*.sample_response.required' => 'Please Select Sample Response']);
+    $validated = $request->validate($rules, $messages);
 
-        // Create the main dialogue
-        $practiceDialogue = NaatiPracticeDialogue::create([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'language_id' => $validated['language_id'],
-            'translation_flow' => '',
-            'category_id'=>$validated['category_id'],
+    // ✅ Create main dialogue
+    $practiceDialogue = NaatiPracticeDialogue::create([
+        'title' => $validated['title'],
+        'description' => $validated['description'],
+        'language_id' => $validated['language_id'],
+        'translation_flow' => '',
+        'category_id' => $validated['category_id'],
+    ]);
+
+    // ✅ Save new segments
+    foreach ($validated['segments'] as $segmentData) {
+        $segmentPath = $segmentData['segment_path']->store('audios', 'public');
+        $sampleResponsePath = $segmentData['sample_response']->store('naati-audios/sample-responses', 'public');
+
+        NaatiPracticeDialoguesSegment::create([
+            'dialogue_id' => $practiceDialogue->id,
+            'segment_path' => $segmentPath,
+            'sample_response' => $sampleResponsePath,
+            'answer_eng' => $segmentData['answer_eng'],
+            'answer_other_language' => $segmentData['answer_second_language'],
         ]);
-
-        // Loop through each segment
-        foreach ($validated['segments'] as $index => $segmentData) {
-            /** @var UploadedFile $file */
-            $file = $request->file("segments.$index.segment_path");
-            $samplefile = $request->file("segments.$index.sample_response");
-
-            if ($file instanceof UploadedFile) {
-                // Store the file
-                $path = $file->store('audios', 'public');
-                $sampleResponsePath = $samplefile->store('naati-audios/sample-responses', 'public');
-
-                // Create the segment entry
-                NaatiPracticeDialoguesSegment::create([
-                    'dialogue_id' => $practiceDialogue->id,
-                    'segment_path' => $path,
-                    'sample_response' => $sampleResponsePath,
-                    'answer_eng' => $segmentData['answer_eng'],
-                    'answer_other_language' => $segmentData['answer_second_language'],
-                ]);
-            }
-        }
-
-        return back()->with('success', 'Practice Dialogue Added');
     }
+
+    return back()->with('success', 'Practice Dialogue Added');
+}
+
+
+
+
+
 
 
     // public static function saveSegments(array $segments, int $practiceId, int $segmentTypeId)

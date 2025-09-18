@@ -167,7 +167,7 @@
              <li class="side-nav-item">
                 <a href="{{route('users.subscription')}}" class="side-nav-link">
                     <span class="menu-icon"><i class="ti ti-file-text"></i></span>
-                    <span class="menu-text">Subsription Plans</span>
+                    <span class="menu-text">Subscription Plans</span>
                 </a>
             </li>
             {{-- <li class="side-nav-item">
