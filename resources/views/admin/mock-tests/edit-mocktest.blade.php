@@ -16,7 +16,7 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.mock-tests.update',$mocktest->id) }}" method="POST" enctype="multipart/form-data">
+        <form class="updateMockTest" action="{{ route('admin.mock-tests.update',$mocktest->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -189,21 +189,21 @@
             wavesurfers[id].playPause();
         });
     });
-     document.addEventListener("click", function(e) {
-    if (e.target.classList.contains("remove-segment-btn")) {
-        let segmentId = e.target.dataset.id;
+//      document.addEventListener("click", function(e) {
+//     if (e.target.classList.contains("remove-segment-btn")) {
+//         let segmentId = e.target.dataset.id;
 
-        // Hide/remove the block from the DOM
-        e.target.closest(".segment-block").remove();
+//         // Hide/remove the block from the DOM
+//         e.target.closest(".segment-block").remove();
 
-        // Add a hidden input so backend knows which to delete
-        let input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "deleted_segments[]";
-        input.value = segmentId;
-        document.querySelector("form").appendChild(input);
-    }
-});
+//         // Add a hidden input so backend knows which to delete
+//         let input = document.createElement("input");
+//         input.type = "hidden";
+//         input.name = "deleted_segments[]";
+//         input.value = segmentId;
+//         document.querySelector("form").appendChild(input);
+//     }
+// });
 
     // Add new segment dynamically
 let segmentCounter = {{ $segments->count() }};
@@ -219,24 +219,24 @@ function addSegment(containerId, dialogueId) {
     block.innerHTML = `
         <h5 class="segment-title p-2">Segment ${currentCount}</h5>
         <button type="button" class="btn btn-danger mt-2 remove-segment-btn">❌ Remove</button>
-        <input type="hidden" name="segments[${newIndex}][dialogue_id]" value="${dialogueId}">
+        <input type="hidden" name="segments[${newIndex}][dialogue_id]" value="${dialogueId}" required>
 
         <div class="mb-1 p-2">
             <label>Segment Audio</label>
-            <input type="file" name="segments[${newIndex}][segment_path]" class="form-control" accept=".mp3,.wav">
+            <input type="file" name="segments[${newIndex}][segment_path]" class="form-control" accept=".mp3,.wav" required>
         </div>
         <div class="mb-1 p-2">
             <label>Sample Response</label>
-            <input type="file" name="segments[${newIndex}][sample_response]" class="form-control" accept=".mp3,.wav">
+            <input type="file" name="segments[${newIndex}][sample_response]" class="form-control" accept=".mp3,.wav" required>
         </div>
         <div class="row p-2">
             <div class="mb-1 p-2 col-sm-6">
                 <label class="form-label">Answer (English)</label>
-                <input type="text" name="segments[${newIndex}][answer_eng]" class="form-control">
+                <input type="text" name="segments[${newIndex}][answer_eng]" class="form-control" required>
             </div>
             <div class="mb-1 p-2 col-sm-6">
                 <label class="form-label">Answer Second Language</label>
-                <input type="text" name="segments[${newIndex}][answer_second_language]" class="form-control">
+                <input type="text" name="segments[${newIndex}][answer_second_language]" class="form-control" required>
             </div>
         </div>
     `;
@@ -244,23 +244,20 @@ function addSegment(containerId, dialogueId) {
 }
 
 // Reuse same remove logic for all (existing + new)
+// Remove segment (works for both existing and new)
 document.addEventListener("click", function(e) {
-    if (e.target.classList.contains("remove-segment-btn")) {
-        let block = e.target.closest(".segment-block");
-        let hiddenIdInput = block.querySelector("input[name*='[id]']"); // existing ones have id
-
-        if (hiddenIdInput) {
-            // Existing segment → mark for deletion
-            let input = document.createElement("input");
-            input.type = "hidden";
-            input.name = "deleted_segments[]";
-            input.value = hiddenIdInput.value;
-            document.querySelector("form").appendChild(input);
-        }
-
-        // Remove from DOM
-        block.remove();
-    }
+  if (e.target.classList.contains("remove-segment-btn")) {
+      let block = e.target.closest(".segment-block");
+      let hiddenIdInput = block.querySelector("input[name*='[id]']");
+      if (hiddenIdInput) {
+          let input = document.createElement("input");
+          input.type = "hidden";
+          input.name = "deleted_segments[]";
+          input.value = hiddenIdInput.value;
+          document.querySelector("form.updateMockTest").appendChild(input);
+      }
+      block.remove();
+  }
 });
 
 </script>

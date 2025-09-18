@@ -299,9 +299,10 @@ class AdminMockTestController extends Controller
     }
 
 
-   public function updateMockTest(Request $request, $id)
+public function updateMockTest(Request $request, $id)
 {
-    // ✅ Validation
+    // dd($request->all());
+    // ✅ Base validation
     $request->validate([
         'title'    => 'required|string|max:255',
         'duration' => 'required|integer|min:1',
@@ -317,13 +318,52 @@ class AdminMockTestController extends Controller
         'dialogue_two_flow'        => 'required|in:english_to_other,other_to_english',
 
         // Segments
-        'segments.*.segment_path'      => 'nullable|file|mimes:mp3,wav|max:10240',
-        'segments.*.sample_response'   => 'nullable|file|mimes:mp3,wav|max:10240',
-        'segments.*.answer_eng'        => 'nullable|string|max:1000',
-        'segments.*.answer_second_language' => 'nullable|string|max:1000',
+        'segments.*.id'  => 'nullable|integer|exists:naati_mock_test_dialogue_segments,id',
+
+        // Deleted segments
+        'deleted_segments'   => 'nullable|array',
+        'deleted_segments.*' => 'integer|exists:naati_mock_test_dialogue_segments,id',
     ]);
 
-    // ✅ Find mock test
+    // ✅ Extra validation: new vs existing segments
+    if ($request->has('segments')) {
+        foreach ($request->segments as $index => $segment) {
+            // Skip deleted
+            if ($request->filled('deleted_segments') &&
+                in_array($segment['id'] ?? null, $request->deleted_segments)) {
+                continue;
+            }
+
+            // New segment → all fields required
+            if (empty($segment['id'])) {
+                $segmentValidator = \Validator::make($segment, [
+                    'dialogue_id'            => 'required|integer',
+                    'segment_path'           => 'required|file|mimes:mp3,wav|max:10240',
+                    'sample_response'        => 'required|file|mimes:mp3,wav|max:10240',
+                    'answer_eng'             => 'required|string|max:1000',
+                    'answer_second_language' => 'required|string|max:1000',
+                ]);
+            } else {
+                // Existing segment → relaxed rules
+                $segmentValidator = \Validator::make($segment, [
+                    'dialogue_id'            => 'required|integer',
+                    'segment_path'           => 'nullable|file|mimes:mp3,wav|max:10240',
+                    'sample_response'        => 'nullable|file|mimes:mp3,wav|max:10240',
+                    'answer_eng'             => 'nullable|string|max:1000',
+                    'answer_second_language' => 'nullable|string|max:1000',
+                ]);
+            }
+
+            if ($segmentValidator->fails()) {
+                return redirect()->back()->withErrors(
+                    $segmentValidator->errors()->mapWithKeys(function ($error, $key) use ($index) {
+                        return ["segments.$index.$key" => $error];
+                    })
+                )->withInput();
+            }
+        }
+    }
+
     $mocktest = NaatiMockTest::findOrFail($id);
 
     // ✅ Update mocktest
@@ -332,54 +372,59 @@ class AdminMockTestController extends Controller
         'duration' => $request->duration,
     ]);
 
-    // ✅ Update dialogue one
-    $dialogueOne = NaatiMockTestDialogue::find($mocktest->dialogue_one_id);
-    if ($dialogueOne) {
-        $dialogueOne->update([
+    // ✅ Update dialogues
+    NaatiMockTestDialogue::where('id', $mocktest->dialogue_one_id)
+        ->update([
             'title'            => $request->dialogue_one_title,
             'description'      => $request->dialogue_one_description,
             'translation_flow' => $request->dialogue_one_flow,
         ]);
-    }
 
-    // ✅ Update dialogue two
-    $dialogueTwo = NaatiMockTestDialogue::find($mocktest->dialogue_two_id);
-    if ($dialogueTwo) {
-        $dialogueTwo->update([
+    NaatiMockTestDialogue::where('id', $mocktest->dialogue_two_id)
+        ->update([
             'title'            => $request->dialogue_two_title,
             'description'      => $request->dialogue_two_description,
             'translation_flow' => $request->dialogue_two_flow,
         ]);
-    }
 
-    // ✅ Handle segments (Add / Update)
+    // ✅ Handle segments (save / update)
     if ($request->has('segments')) {
         foreach ($request->segments as $segmentData) {
+            // Skip deleted
+            if ($request->filled('deleted_segments') &&
+                in_array($segmentData['id'] ?? null, $request->deleted_segments)) {
+                continue;
+            }
+
             $segment = !empty($segmentData['id'])
                 ? NaatiMockTestDialogueSegment::find($segmentData['id'])
-                : new NaatiMockTestDialogueSegment(['dialogue_id' => $segmentData['dialogue_id']]);
+                : new NaatiMockTestDialogueSegment();
 
             if (!$segment) continue;
 
-            // Handle segment audio
-            if (isset($segmentData['segment_path']) && $segmentData['segment_path'] instanceof \Illuminate\Http\UploadedFile) {
+            $segment->dialogue_id = $segmentData['dialogue_id'];
+
+            // Segment audio
+            if (!empty($segmentData['segment_path']) &&
+                $segmentData['segment_path'] instanceof \Illuminate\Http\UploadedFile) {
                 if ($segment->segment_path && Storage::disk('public')->exists($segment->segment_path)) {
                     Storage::disk('public')->delete($segment->segment_path);
                 }
                 $segment->segment_path = $segmentData['segment_path']->store('mocktest-audios', 'public');
             }
 
-            // Handle sample response
-            if (isset($segmentData['sample_response']) && $segmentData['sample_response'] instanceof \Illuminate\Http\UploadedFile) {
+            // Sample response
+            if (!empty($segmentData['sample_response']) &&
+                $segmentData['sample_response'] instanceof \Illuminate\Http\UploadedFile) {
                 if ($segment->sample_response && Storage::disk('public')->exists($segment->sample_response)) {
                     Storage::disk('public')->delete($segment->sample_response);
                 }
                 $segment->sample_response = $segmentData['sample_response']->store('mocktest-audios/sample-responses', 'public');
             }
 
-            // Update text answers
-            $segment->answer_eng = $segmentData['answer_eng'] ?? $segment->answer_eng;
-            $segment->answer_other_language = $segmentData['answer_second_language'] ?? $segment->answer_other_language;
+            // Answers
+            $segment->answer_eng = $segmentData['answer_eng'] ?? null;
+            $segment->answer_other_language = $segmentData['answer_second_language'] ?? null;
 
             $segment->save();
         }
@@ -387,24 +432,23 @@ class AdminMockTestController extends Controller
 
     // ✅ Handle deleted segments
     if ($request->has('deleted_segments')) {
-        foreach ($request->deleted_segments as $deletedId) {
-            $segment = NaatiMockTestDialogueSegment::find($deletedId);
-            if ($segment) {
-                // delete audio files
-                if ($segment->segment_path && Storage::disk('public')->exists($segment->segment_path)) {
-                    Storage::disk('public')->delete($segment->segment_path);
+    foreach ($request->deleted_segments as $deletedId) {
+        $segment = NaatiMockTestDialogueSegment::find($deletedId);
+        if ($segment) {
+            // delete files if exist
+            if ($segment->segment_path) Storage::delete('public/'.$segment->segment_path);
+            if ($segment->sample_response) Storage::delete('public/'.$segment->sample_response);
+            $segment->delete();
                 }
-                if ($segment->sample_response && Storage::disk('public')->exists($segment->sample_response)) {
-                    Storage::disk('public')->delete($segment->sample_response);
-                }
-                // delete db record
-                $segment->delete();
             }
         }
-    }
 
     return redirect()->back()->with('success', 'Mock Test updated successfully!');
 }
+
+
+
+
 
 
 

@@ -139,12 +139,12 @@
 
             <div class="mb-3 p-2">
                 <label class="form-label">Audio File (MP3)</label>
-                <input type="file" name="segments[${segmentIndex}][segment_path]" class="form-control" accept=".mp3,.wav" >
+                <input type="file" name="segments[${segmentIndex}][segment_path]" class="form-control" accept=".mp3,.wav" required >
             </div>
 
             <div class="mb-1 p-2">
                 <label class="form-label">Sample Response (MP3)</label>
-                <input type="file" name="segments[${segmentIndex}][sample_response]" class="form-control" accept=".mp3,.wav">
+                <input type="file" name="segments[${segmentIndex}][sample_response]" class="form-control" accept=".mp3,.wav" required>
             </div>
 
             <div class="row p-2">
