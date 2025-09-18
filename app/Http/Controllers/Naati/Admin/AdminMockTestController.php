@@ -275,10 +275,27 @@ class AdminMockTestController extends Controller
         return back()->with('success', 'Feedback updated successfully!');
     }
 
-   public function manage(){
-    $practiceDialogues = NaatiMockTest::latest()->get();
-    return view('admin.mock-tests.manage-mocktest',compact('practiceDialogues'));
-   }
+   public function manage(Request $request)
+    {
+        $languages = DB::table('languages')->get();
+
+        $query = DB::table('naati_mock_tests')
+            ->join('languages', 'naati_mock_tests.language_id', '=', 'languages.id')
+            ->select('naati_mock_tests.*', 'languages.second_language as language_name')
+            ->orderByDesc('naati_mock_tests.created_at');
+
+        // ✅ Handle filter (GET or POST)
+        $languageId = $request->input('language_id');
+
+        if (!empty($languageId)) {
+            $query->where('naati_mock_tests.language_id', $languageId);
+        }
+
+        $practiceDialogues = $query->get();
+
+        return view('admin.mock-tests.manage-mocktest', compact('practiceDialogues', 'languages', 'languageId'));
+    }
+
 
    public function edit($id){
          $mocktest = NaatiMockTest::findOrFail($id);

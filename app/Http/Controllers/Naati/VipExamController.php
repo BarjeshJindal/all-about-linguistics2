@@ -9,6 +9,7 @@ use App\Models\NaatiVipExam;
 use App\Models\NaatiVipExamSegment;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use DB;
 class VipExamController extends Controller
 {
     
@@ -72,18 +73,27 @@ class VipExamController extends Controller
         return redirect()->back()->with('success', 'Vip Exam Created Succeesfully');
     }
 
-    public function manageVipExam(){
-        // dd('code working');
-         $practiceDialogues = NaatiVipExam::latest()->get();
-        // $practiceSegments  = NaatiPracticeDialogue::query()
-        //     ->select('naati_practice_dialogues.*', 'naati_practice_dialogues_segments.*')
-        //     ->join('naati_practice_dialogues_segments', 'naati_practice_dialogues_segments.dialogue_id', '=', 'naati_practice_dialogues.id')
-        //     ->where('naati_practice_dialogues.id', $id)
-        //     ->latest('naati_practice_dialogues.created_at')
-        //     ->get();
-        // $practiceSegments = NaatiVipExamSegment::where('dialogue_id', $practiceDialogue->id)->get();
-       return view('admin.vip-exams.manage',compact('practiceDialogues'));
+    public function manageVipExam(Request $request)
+    {
+        $languages = DB::table('languages')->get();
+
+        $query = DB::table('naati_vip_exams')
+            ->join('languages', 'naati_vip_exams.language_id', '=', 'languages.id')
+            ->select('naati_vip_exams.*', 'languages.second_language as language_name')
+            ->orderByDesc('naati_vip_exams.created_at');
+
+        // ✅ Handle filter (GET or POST)
+        $languageId = $request->input('language_id');
+
+        if (!empty($languageId)) {
+            $query->where('naati_vip_exams.language_id', $languageId);
+        }
+
+        $practiceDialogues = $query->get();
+
+        return view('admin.vip-exams.manage', compact('practiceDialogues', 'languages', 'languageId'));
     }
+
 
     public function editVipExam($id){
         $practiceDialogue= NaatiVipExam::findorFail($id);

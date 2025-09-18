@@ -92,7 +92,10 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::get('/edit/{id}/faq',[FaqController::class,'faqEdit'])->name('faqs.edit');
     Route::put('/update-faqs/{id}/faq',[FaqController::class,'faqUpdate'])->name('faqs.update');
     Route::delete('/delete/{id}/faq', [FaqController::class, 'faqDelete'])->name('faqs.delete');
- 
+    
+    // filter practice dialogue by language
+    Route::match(['get', 'post'], 'practice-dialogues/manage', [PracticeDialogueController::class, 'manageView'])
+        ->name('practice-dialogues.manage');
 
     // Practice Dialogue
     Route::get('/practices', [PracticeDialogueController::class, 'index'])->name('practices.index');
@@ -118,7 +121,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
 
     Route::get('/vip-exam/create', [VipExamController::class, 'create'])->name('vip-exams.create');
     Route::post('/vip-exam/store', [VipExamController::class, 'store'])->name('vip-exams.store');
-    Route::get('/vip-exam/manage', [VipExamController::class, 'manageVipExam'])->name('vip-exams.manage');
+    Route::match(['get', 'post'], 'vip-exams/manage', [VipExamController::class, 'manageVipExam'])
+        ->name('vip-exams.manage');
     Route::get('/edit/{id}/vip-exam', [VipExamController::class, 'editVipExam'])->name('vip-exams.edit');
     Route::put('/update/{id}/vip-exam', [VipExamController::class, 'vipexamUpdate'])->name('vip-exams.update');
 
@@ -155,7 +159,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     // Route::get('/mock-tests/', [MockTestController::class, 'index'])->name('mock-tests.index');
     Route::get('/mock-tests/create', [AdminMockTestController::class, 'create'])->name('mock-tests.addMockTest');
     Route::post('/mock-tests/store', [AdminMockTestController::class, 'store'])->name('mock-tests.store');
-    Route::get('/mock-tests/manage', [AdminMockTestController::class, 'manage'])->name('mock-tests.manage');
+   
+    Route::match(['get', 'post'], 'mock-tests/manage', [AdminMockTestController::class, 'manage'])
+        ->name('mock-tests.manage');
     Route::get('/mock-tests/{id}/edit', [AdminMockTestController::class, 'edit'])->name('mock-tests.edit');
     Route::put('/mock-tests/{id}/update', [AdminMockTestController::class, 'updateMockTest'])->name('mock-tests.update');
     

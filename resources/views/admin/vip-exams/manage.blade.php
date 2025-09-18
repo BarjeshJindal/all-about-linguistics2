@@ -10,6 +10,21 @@
 
         <div class="d-flex justify-content-between mb-3">
             <h4>All Vip Exam</h4>
+
+             <form method="POST" action="{{ route('admin.vip-exams.manage') }}" class="d-flex">
+                @csrf
+                    <select name="language_id" class="form-select me-2" style="width:200px" onchange="this.form.submit()">
+                        <option value=""> Select Language </option>
+                        @foreach($languages as $language)
+                            <option value="{{ $language->id }}" {{ request('language_id') == $language->id ? 'selected' : '' }}>
+                                {{ $language->second_language }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @if(request('language_id'))
+                        <a href="{{ route('admin.vip-exams.manage') }}" class="btn btn-sm btn-warning">Reset</a>
+                    @endif
+            </form>
             {{-- <a href="{{ route('admin.faqs.create') }}" class="btn btn-primary">+ Add FAQ</a> --}}
         </div>
 
@@ -33,7 +48,7 @@
                         <tr>
                             <td>{{$loop->iteration }}</td>
                             <td>{{ Str::limit($practiceDialogue->title, 80) }}</td>
-                            <td>{{ $practiceDialogue->created_at->format('d M Y') }}</td>
+                             <td>{{ \Carbon\Carbon::parse($practiceDialogue->created_at)->format('d M Y') }}</td>
                             <td>
                                 <a href="{{ route('admin.vip-exams.edit', $practiceDialogue->id) }}" class="btn btn-sm btn-warning">Edit</a>
 

@@ -14,6 +14,7 @@ use Illuminate\Http\UploadedFile;
 use App\Models\NaatiCategory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;   
+use Illuminate\Support\Facades\DB;
 // use Illuminate\Http\Request;
 // use Illuminate\Support\Facades\Validator;
 // use Illuminate\Http\UploadedFile;
@@ -128,10 +129,25 @@ public function store(Request $request)
 
         
     // }
-    public function manageView(){
-        $practiceDialogues = NaatiPracticeDialogue::latest()->get();
-        // dd('code running');
-        return view('admin.practice-dialogues.list',compact('practiceDialogues'));
+    public function manageView(Request $request)
+    {
+        $languages = DB::table('languages')->get();
+
+        $query = DB::table('naati_practice_dialogues')
+            ->join('languages', 'naati_practice_dialogues.language_id', '=', 'languages.id')
+            ->select('naati_practice_dialogues.*', 'languages.second_language as language_name')
+            ->orderByDesc('naati_practice_dialogues.created_at');
+
+        // ✅ Handle filter (GET or POST)
+        $languageId = $request->input('language_id');
+
+        if (!empty($languageId)) {
+            $query->where('naati_practice_dialogues.language_id', $languageId);
+        }
+
+        $practiceDialogues = $query->get();
+
+        return view('admin.practice-dialogues.list', compact('practiceDialogues', 'languages', 'languageId'));
     }
    
     public function practiceDialogueEdit($id){
