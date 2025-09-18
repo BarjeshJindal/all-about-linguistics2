@@ -57,7 +57,7 @@
                 @foreach($segments->where('dialogue_id', $mocktest->dialogue_one_id) as $loopIndex => $segment)
                     <div class="segment-block mb-4 mt-4 border p-6 rounded-2xl bg-light">
                         <h5 class="segment-title p-2">Segment {{ $loop->iteration }}</h5>
-
+                        <button type="button" class="btn btn-danger mt-2 remove-segment-btn" data-id="{{ $segment->id }}">❌ Remove</button>
                         <input type="hidden" name="segments[{{ $loopIndex }}][id]" value="{{ $segment->id }}">
                         <input type="hidden" name="segments[{{ $loopIndex }}][dialogue_id]" value="{{ $mocktest->dialogue_one_id }}">
 
@@ -117,7 +117,7 @@
                 @foreach($segments->where('dialogue_id', $mocktest->dialogue_two_id) as $loopIndex => $segment)
                     <div class="segment-block mb-4 mt-4 border p-6 rounded-2xl bg-light">
                         <h5 class="segment-title p-2">Segment {{ $loop->iteration }}</h5>
-
+                        <button type="button" class="btn btn-danger mt-2 remove-segment-btn" data-id="{{ $segment->id }}">❌ Remove</button>
                         <input type="hidden" name="segments[{{ $loopIndex }}][id]" value="{{ $segment->id }}">
                         <input type="hidden" name="segments[{{ $loopIndex }}][dialogue_id]" value="{{ $mocktest->dialogue_two_id }}">
 
@@ -189,38 +189,79 @@
             wavesurfers[id].playPause();
         });
     });
+     document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("remove-segment-btn")) {
+        let segmentId = e.target.dataset.id;
+
+        // Hide/remove the block from the DOM
+        e.target.closest(".segment-block").remove();
+
+        // Add a hidden input so backend knows which to delete
+        let input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "deleted_segments[]";
+        input.value = segmentId;
+        document.querySelector("form").appendChild(input);
+    }
+});
 
     // Add new segment dynamically
-    let segmentCounter = {{ $segments->count() }};
-    function addSegment(containerId, dialogueId) {
-        const container = document.getElementById(containerId);
-        const newIndex = segmentCounter++;
+let segmentCounter = {{ $segments->count() }};
+function addSegment(containerId, dialogueId) {
+    const container = document.getElementById(containerId);
+    const newIndex = segmentCounter++;
 
-        const block = document.createElement('div');
-        block.classList.add('segment-block','mb-4','mt-4','border','p-6','rounded-2xl','bg-light');
-        block.innerHTML = `
-            <h5 class="segment-title p-2">New Segment</h5>
-            <input type="hidden" name="segments[${newIndex}][dialogue_id]" value="${dialogueId}">
-            <div class="mb-1 p-2">
-                <label>Segment Audio</label>
-                <input type="file" name="segments[${newIndex}][segment_path]" class="form-control" accept=".mp3,.wav">
+    // Get segment count inside this dialogue container (excluding removed)
+    const currentCount = container.querySelectorAll('.segment-block').length + 1;
+
+    const block = document.createElement('div');
+    block.classList.add('segment-block','mb-4','mt-4','border','p-6','rounded-2xl','bg-light');
+    block.innerHTML = `
+        <h5 class="segment-title p-2">Segment ${currentCount}</h5>
+        <button type="button" class="btn btn-danger mt-2 remove-segment-btn">❌ Remove</button>
+        <input type="hidden" name="segments[${newIndex}][dialogue_id]" value="${dialogueId}">
+
+        <div class="mb-1 p-2">
+            <label>Segment Audio</label>
+            <input type="file" name="segments[${newIndex}][segment_path]" class="form-control" accept=".mp3,.wav">
+        </div>
+        <div class="mb-1 p-2">
+            <label>Sample Response</label>
+            <input type="file" name="segments[${newIndex}][sample_response]" class="form-control" accept=".mp3,.wav">
+        </div>
+        <div class="row p-2">
+            <div class="mb-1 p-2 col-sm-6">
+                <label class="form-label">Answer (English)</label>
+                <input type="text" name="segments[${newIndex}][answer_eng]" class="form-control">
             </div>
-            <div class="mb-1 p-2">
-                <label>Sample Response</label>
-                <input type="file" name="segments[${newIndex}][sample_response]" class="form-control" accept=".mp3,.wav">
+            <div class="mb-1 p-2 col-sm-6">
+                <label class="form-label">Answer Second Language</label>
+                <input type="text" name="segments[${newIndex}][answer_second_language]" class="form-control">
             </div>
-            <div class="row p-2">
-                <div class="mb-1 p-2 col-sm-6">
-                    <label class="form-label">Answer (English)</label>
-                    <input type="text" name="segments[${newIndex}][answer_eng]" class="form-control">
-                </div>
-                <div class="mb-1 p-2 col-sm-6">
-                    <label class="form-label">Answer Second Language</label>
-                    <input type="text" name="segments[${newIndex}][answer_second_language]" class="form-control">
-                </div>
-            </div>
-        `;
-        container.appendChild(block);
+        </div>
+    `;
+    container.appendChild(block);
+}
+
+// Reuse same remove logic for all (existing + new)
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("remove-segment-btn")) {
+        let block = e.target.closest(".segment-block");
+        let hiddenIdInput = block.querySelector("input[name*='[id]']"); // existing ones have id
+
+        if (hiddenIdInput) {
+            // Existing segment → mark for deletion
+            let input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "deleted_segments[]";
+            input.value = hiddenIdInput.value;
+            document.querySelector("form").appendChild(input);
+        }
+
+        // Remove from DOM
+        block.remove();
     }
+});
+
 </script>
 @endsection
